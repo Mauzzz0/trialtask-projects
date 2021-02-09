@@ -3,20 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 
-class Quiz(models.Model):
-    """Опрос"""
-    title = models.CharField("Название", max_length=50)
-    date_start = models.DateTimeField("Время начала",auto_now=True)
-    date_end = models.DateTimeField("Время окончания") # TODO: Autoending
-    description = models.TextField("Описание")
-    is_active=models.BooleanField("Активный",default=True)
-
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Опрос"
-        verbose_name_plural = "Опросы"
 
 class Question(models.Model):
     """Вопрос"""
@@ -27,19 +13,13 @@ class Question(models.Model):
                 ("С 1 вариантом","С 1 вариантом"),
                 ("С несколькими вариантами","С несколькими вариантами")
             ))
-    #Answers:
-    #var1 = models.CharField("Вариант ответа1",max_length=30,null=True)
-    #var2 = models.CharField("Вариант ответа2",max_length=30,null=True)
-    #var3 = models.CharField("Вариант ответа3",max_length=30,null=True)
+
+    var1 = models.CharField("Вариант ответа1",max_length=30,null=True)
+    var2 = models.CharField("Вариант ответа2",max_length=30,null=True)
+    var3 = models.CharField("Вариант ответа3",max_length=30,null=True)
     # Как-то грамотно можно сделать список с неопределённым количеством вариантов ответа
     # И его передавать в detail_view.html для вопросов с выбором ответа.
-    quiz = models.ForeignKey(
-            Quiz,
-            verbose_name="Опрос",
-            related_name="question_quiz",
-            on_delete=models.CASCADE
-            # Логично: удаление опроса приводит к удалению всех его вопросов
-    )
+
 
     def __str__(self):
         return self.text[:30]
@@ -47,6 +27,38 @@ class Question(models.Model):
     class Meta:
         verbose_name = "Вопрос"
         verbose_name_plural = "Вопросы"
+
+class Quiz(models.Model):
+    """Опрос"""
+    title = models.CharField("Название", max_length=50)
+    date_start = models.DateTimeField("Время начала",auto_now=True)
+    date_end = models.DateTimeField("Время окончания") # TODO: Autoending
+    description = models.TextField("Описание")
+    is_active=models.BooleanField("Активный",default=True)
+    q1 = models.ForeignKey(
+            Question,
+            verbose_name="Вопрос 1",
+            related_name="quiz_q1",
+            on_delete=models.SET_NULL,
+            null=True)
+    q2 = models.ForeignKey(
+        Question,
+        verbose_name="Вопрос 2",
+        related_name="quiz_q2",
+        on_delete=models.SET_NULL,
+        null=True)
+    q3 = models.ForeignKey(
+        Question,
+        verbose_name="Вопрос 3",
+        related_name="quiz_q3",
+        on_delete=models.SET_NULL,
+        null=True)
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Опрос"
+        verbose_name_plural = "Опросы"
 
 
 

@@ -11,16 +11,31 @@ def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
     return render(request, "homePage.html", {"quizzes" : quizzes})
 
-class QuizDetailView(DetailView):
+#lass QuizDetailView(DetailView): # on detail_view.html
+#   model = Quiz
+#   template_name = 'detail_view.html'
+#   context_object_name = "quiz"
+#   questions = lambda x: x.object.question_quiz.all()
+
+#   def post(self,request): # Unexpected 'pk'
+#       if request.methond == 'POST':
+#           print("AAAAAAAAAAAAAAAAAA")
+#           pass
+
+class QuizDetailView1(DetailView): # on each_quiz.html
     model = Quiz
-    template_name = 'detail_view.html'
+    template_name = 'each_quiz.html'
     context_object_name = "quiz"
     questions = lambda x: x.object.question_quiz.all()
-
-    def post(self,request):
-        if request.methond == 'POST':
-            print("AAAAAAAAAAAAAAAAAA")
-            pass
+    def post(self,request,*args,**kwargs):
+        q1ans = request.POST.get('q1ans')
+        q2ans = request.POST.get('q2ans')
+        q3ans = [x for x in (request.POST.get('q3ans1'),
+                             request.POST.get('q3ans2'),
+                             request.POST.get('q3ans3'))
+                 if x != None]
+        print(request.user.pk)
+        pass
 
 
 class LogoutFormView(FormView):

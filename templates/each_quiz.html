@@ -1,0 +1,21 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    <h1>{{ quiz.title }}</h1>
+    <h1>Начало: {{ quiz.date_start }}</h1>
+    <h1>Конец: {{ quiz.date_end }}</h1>
+    <h1>Описание: {{ quiz.description }}</h1>
+    <h1>{{ quiz.q1 }}</h1>
+    <input name="q1ans" type="text" size="40">
+    <h1>{{ quiz.q2 }}</h1>
+    <input type="radio" name="q2ans" value="{{ quiz.q2.var1 }}">{{ quiz.q2.var1 }}<Br>
+    <input type="radio" name="q2ans" value="{{ quiz.q2.var2 }}">{{ quiz.q2.var2 }}<Br>
+    <input type="radio" name="q2ans" value="{{ quiz.q2.var3 }}">{{ quiz.q2.var3 }}<Br>
+    <h1>{{ quiz.q3 }}</h1>
+    <input type="checkbox" name="q3ans1" value="{{ quiz.q3.var1 }}">{{ quiz.q3.var1 }}<Br>
+    <input type="checkbox" name="q3ans2" value="{{ quiz.q3.var2 }}">{{ quiz.q3.var2 }}<Br>
+    <input type="checkbox" name="q3ans3" value="{{ quiz.q3.var3 }}">{{ quiz.q3.var3 }}<Br>
+    <p><input type="submit" value="Отправить"></p>
+    </form>
+{% endblock %}
