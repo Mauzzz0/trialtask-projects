@@ -6,6 +6,7 @@ urlpatterns = [
     path('<int:pk>', views.QuizDetailView.as_view(),name="quiz_detail"),
     path('my_answers',views.Answers,name="my_answers"),
     path('create_question', views.create_question,name="create_question"),
+    path('create_quiz', views.create_quiz,name="create_quiz"),
     path('logout',views.LogoutFormView.as_view()),
     path('login',views.LoginFormView.as_view())
 ]

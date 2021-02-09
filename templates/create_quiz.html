@@ -1,0 +1,20 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+<div class="features">
+    <h1>Форма для добавления опроса</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.title }}<br>
+        {{ form.date_end }}<br>
+        {{ form.description }}<br>
+        <b>Активность:</b>
+        {{ form.is_Active }}<br>
+        <b>Список вопросов:</b><BR>
+        {{ form.q1 }}<br>
+        {{ form.q2 }}<br>
+        {{ form.q3 }}<br>
+        <span>{{ error }}</span>
+        <button class="btn btn-success" type="submit">Добавить</button>
+    </form>
+    </div>
+{% endblock %}

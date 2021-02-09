@@ -9,7 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from .models import Quiz,CompletedQuiz
-from .forms import CreateQuestion
+from .forms import CreateQuestion, CreateQuiz
 
 def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
@@ -44,6 +44,26 @@ def create_question(request):
     }
 
     return render(request,"create_question.html",data)
+
+def create_quiz(request):
+    error = ''
+    form = CreateQuiz()
+    if request.method == 'POST':
+        print(request.POST)
+        form = CreateQuiz(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+        else:
+            error = "Incorrect form"
+
+    data = {
+        'form' : form,
+        'error' : error
+    }
+
+    return render(request,"create_quiz.html",data)
+
 
 class QuizDetailView(DetailView):
     """Каждый опросник"""
