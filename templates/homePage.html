@@ -1,0 +1,16 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+    {% if quizzes|length > 0 %}
+        {% for el in quizzes %}
+            {%  if el.is_Active == true %}
+            <div class="alert alert-warning">
+                <h3>{{ el.title }}</h3>
+                <p>{{ el.description }}</p>
+            <a href="{% url 'quiz_detail' el.id %}" class="btn btn-warning">Читать дальше</a>
+            </div>
+            {%  endif  %}
+        {% endfor %}
+    {%  else %}
+        <p>Записей не найдено</p>
+    {% endif %}
+{% endblock %}
