@@ -15,8 +15,7 @@ def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
     for quiz in quizzes:
         if quiz.date_end < datetime.datetime.now(utc):
-            print(quiz.date_end) # Просроченные опросы становятся inactive
-            print(datetime.datetime.now(utc))
+            # Просроченные опросы становятся inactive
             quiz.is_Active = False
             quiz.save()
 
@@ -27,7 +26,7 @@ def Answers(request):
     answers = CompletedQuiz.objects.filter(user_id=user_id)
     return render(request, "my_answers.html", {"answers" : answers})
 
-@permission_required('add questions') #Права никому не выдавал
+@permission_required('add_questions') #Права никому не выдавал
 def create_question(request):        #=> могут только суперюзеры
     error = ''
     form = CreateQuestion()
@@ -45,7 +44,7 @@ def create_question(request):        #=> могут только суперюз�
     }
     return render(request,"create_question.html",data)
 
-@permission_required('add quizzes') #Права никому не выдавал
+@permission_required('add_quizzes') #Права никому не выдавал
 def create_quiz(request):          #=> могут только суперюзеры
     error = ''
     form = CreateQuiz()

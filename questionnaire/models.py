@@ -32,7 +32,7 @@ class Quiz(models.Model):
     """Опрос"""
     title = models.CharField("Название", max_length=50)
     date_start = models.DateTimeField("Время начала",auto_now=True)
-    date_end = models.DateTimeField("Время окончания") # TODO: Autoending
+    date_end = models.DateTimeField("Время окончания")
     description = models.TextField("Описание")
     is_active=models.BooleanField("Активный",default=True)
     q1 = models.ForeignKey(
@@ -59,6 +59,7 @@ class Quiz(models.Model):
     class Meta:
         verbose_name = "Опрос"
         verbose_name_plural = "Опросы"
+        unique_together = (("q1", "q2"),("q1","q3"),("q2","q3"))
 
 class CompletedQuiz(models.Model):
     """Законченный опрос"""

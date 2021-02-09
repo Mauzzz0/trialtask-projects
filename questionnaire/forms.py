@@ -30,7 +30,7 @@ class CreateQuestion(ModelForm):
 
 class CreateQuiz(ModelForm):
 
-    is_Active = BooleanField(required=True)
+    is_Active = BooleanField(required=False)
     q1 = ModelChoiceField(
         required=True,
         queryset=Question.objects.all()
