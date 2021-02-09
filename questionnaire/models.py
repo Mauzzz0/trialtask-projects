@@ -61,6 +61,7 @@ class Quiz(models.Model):
         verbose_name_plural = "Опросы"
 
 class CompletedQuiz(models.Model):
+    """Законченный опрос"""
     user_id = models.ForeignKey(
         User,
         verbose_name="Пользователь, прошедший опрос",
@@ -81,50 +82,10 @@ class CompletedQuiz(models.Model):
     q2ans = models.CharField("Ответ на вопрос2",max_length=255,blank=True)
     q3ans = models.CharField("Ответ на вопрос3",max_length=255,blank=True)
 
-#class UserManager(BaseUserManager):
-#    """..."""
-#    def _create_user(self, username, email, password=None):
-#        if not username:
-#            raise ValueError("Incorrect username")
-#        if not email:
-#            raise ValueError("Incorrect email")
-#
-#        #email = self.normalize_email(email)
-#        #user = self.model(username=username,email=email)
-#        #user.set_password(password)
-#        #user.save(using=self._db)
-#        return user
-#
-#class User(AbstractBaseUser, PermissionsMixin):
-#    """Пользователь"""
-#    username = models.CharField(max_length=50, unique=True)
-#    email = models.EmailField(
-#        validators=[validators.validate_email],
-#        unique=True
-#    )
-#
-#    #is_staff = models.BooleanField(default=False)
-#    #is_active= models.BooleanField(default=True)
-#
-#    USERNAME_FIELD = 'email'
-#    REQUIRED_FIELDS = ('username',)
-#
-#    objects = UserManager()
-#
-#    def __str__(self):
-#        return self.username
-#
-#    @property
-#    def token(self):
-#        return self._generate_jwt_token()
-#
-#    def _generate_jwt_token(self):
-#        dt = datetime.now() + timedelta(days=100)
-#
-#        token = jwt.encode({
-#            'id' : self.pk,
-#            'exp' : int(dt.strftime('%s'))
-#        }, settings.SECRET_KEY, algorithm="HS256")
-#
-#        return token.decode('utf-8')
+    def __str__(self):
+        return self.user_id.username + self.quiz_id.title
 
+    class Meta:
+        verbose_name = "Законченный опрос"
+        verbose_name_plural = "Законченные опросы"
+        unique_together = (("user_id","quiz_id"),)
