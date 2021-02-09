@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth import logout
-from .models import Quiz
+from .models import Quiz,CompletedQuiz
 
 def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
@@ -26,15 +26,27 @@ class QuizDetailView1(DetailView): # on each_quiz.html
     model = Quiz
     template_name = 'each_quiz.html'
     context_object_name = "quiz"
-    questions = lambda x: x.object.question_quiz.all()
+    #questions = lambda x: x.object.question_quiz.all()
     def post(self,request,*args,**kwargs):
+        self.object = self.get_object()
         q1ans = request.POST.get('q1ans')
         q2ans = request.POST.get('q2ans')
-        q3ans = [x for x in (request.POST.get('q3ans1'),
+        q3ans = "".join([x+" " for x in (request.POST.get('q3ans1'),
                              request.POST.get('q3ans2'),
                              request.POST.get('q3ans3'))
-                 if x != None]
-        print(request.user.pk)
+                 if x is not None])
+
+        CQ = CompletedQuiz(
+            user_id_id=request.user.pk,
+            quiz_id=self.object,
+            q1 = self.object.q1,
+            q2 = self.object.q2,
+            q3 = self.object.q3,
+            q1ans=q1ans,
+            q2ans=q2ans,
+            q3ans=q3ans
+        )
+        CQ.save()
         pass
 
 

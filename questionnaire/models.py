@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 
@@ -60,7 +60,26 @@ class Quiz(models.Model):
         verbose_name = "Опрос"
         verbose_name_plural = "Опросы"
 
-
+class CompletedQuiz(models.Model):
+    user_id = models.ForeignKey(
+        User,
+        verbose_name="Пользователь, прошедший опрос",
+        related_name="quiz_user",
+        on_delete=models.CASCADE
+    )
+    quiz_id = models.ForeignKey(
+        Quiz,
+        verbose_name="Опрос",
+        related_name="quiz",
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    q1 = models.CharField("Вопрос1", max_length=255,blank=True)
+    q2 = models.CharField("Вопрос2", max_length=255,blank=True)
+    q3 = models.CharField("Вопрос3", max_length=255,blank=True)
+    q1ans = models.CharField("Ответ на вопрос1",max_length=255,blank=True)
+    q2ans = models.CharField("Ответ на вопрос2",max_length=255,blank=True)
+    q3ans = models.CharField("Ответ на вопрос3",max_length=255,blank=True)
 
 #class UserManager(BaseUserManager):
 #    """..."""
