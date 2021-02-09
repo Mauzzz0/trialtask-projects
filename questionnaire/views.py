@@ -1,5 +1,8 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+import datetime
+
+from django.utils.timezone import utc
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,6 +12,13 @@ from .models import Quiz,CompletedQuiz
 
 def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
+    for quiz in quizzes:
+        if quiz.date_end < datetime.datetime.now(utc):
+            print(quiz.date_end) # Просроченные опросы становятся inactive
+            print(datetime.datetime.now(utc))
+            quiz.is_Active = False
+            quiz.save()
+
     return render(request, "homePage.html", {"quizzes" : quizzes})
 
 def Answers(request):
