@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin
 
 
 admin.site.register(Question)
-#admin.site.register(Quiz)
+
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):

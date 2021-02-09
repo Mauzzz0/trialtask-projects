@@ -31,8 +31,8 @@ class Question(models.Model):
     #var1 = models.CharField("Вариант ответа1",max_length=30,null=True)
     #var2 = models.CharField("Вариант ответа2",max_length=30,null=True)
     #var3 = models.CharField("Вариант ответа3",max_length=30,null=True)
-    # Как-то грамотно можно сделать список с неустановленным количеством вариантов
-    # И его передавать в detail_view.html
+    # Как-то грамотно можно сделать список с неопределённым количеством вариантов ответа
+    # И его передавать в detail_view.html для вопросов с выбором ответа.
     quiz = models.ForeignKey(
             Quiz,
             verbose_name="Опрос",
