@@ -11,6 +11,11 @@ def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
     return render(request, "homePage.html", {"quizzes" : quizzes})
 
+def Answers(request):
+    user_id = request.user.pk
+    answers = CompletedQuiz.objects.filter(user_id=user_id)
+    return render(request, "my_answers.html", {"answers" : answers})
+
 class QuizDetailView(DetailView):
     """Каждый опросник"""
     model = Quiz

@@ -1,0 +1,19 @@
+{% extends 'wrapper.html' %}
+{% block content %}
+    {% if answers|length > 0 %}
+        {% for el in answers %}
+            <div style="background: #adb5bd">
+                <h1>{{ el.quiz_id }}</h1>
+                <b>{{ el.q1 }}</b>
+                <p>{{ el.q1ans }}</p>
+                <b>{{ el.q2 }}</b>
+                <p>{{ el.q2ans }}</p>
+                <b>{{ el.q3 }}</b>
+                <p>{{ el.q3ans }}</p>
+            </div>
+            <br><br>
+        {% endfor %}
+    {%  else %}
+        <p>Записей не найдено</p>
+    {% endif %}
+{% endblock %}
