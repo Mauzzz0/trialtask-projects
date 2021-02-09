@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import datetime
 
 from django.utils.timezone import utc
@@ -9,6 +9,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
 from django.contrib.auth import logout
 from .models import Quiz,CompletedQuiz
+from .forms import CreateQuestion
 
 def Home(request):
     quizzes = Quiz.objects.order_by('-date_start')
@@ -25,6 +26,24 @@ def Answers(request):
     user_id = request.user.pk
     answers = CompletedQuiz.objects.filter(user_id=user_id)
     return render(request, "my_answers.html", {"answers" : answers})
+
+def create_question(request):
+    error = ''
+    form = CreateQuestion()
+    if request.method == 'POST':
+        form = CreateQuestion(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+        else:
+            error = "Incorrect form"
+
+    data = {
+        'form' : form,
+        'error' : error
+    }
+
+    return render(request,"create_question.html",data)
 
 class QuizDetailView(DetailView):
     """Каждый опросник"""
