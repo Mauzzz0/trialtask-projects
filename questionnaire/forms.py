@@ -1,10 +1,7 @@
 import datetime
-
 from django.utils.timezone import utc
-
 from .models import Quiz, Question
-from django.forms import ModelForm, TextInput, DateTimeInput, Textarea, BooleanField, forms, RadioSelect, \
-    ModelChoiceField
+from django.forms import ModelForm, TextInput, DateTimeInput, BooleanField,ModelChoiceField
 
 
 class CreateQuestion(ModelForm):
@@ -47,6 +44,7 @@ class CreateQuiz(ModelForm):
         queryset=Question.objects.all()
     )
     date_start = datetime.datetime.now(utc)
+
     class Meta:
         model = Quiz
         fields = ['title','date_end','description',

@@ -2,7 +2,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 import datetime
 from django.contrib.auth.decorators import permission_required
-
 from django.utils.timezone import utc
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
@@ -28,8 +27,8 @@ def Answers(request):
     answers = CompletedQuiz.objects.filter(user_id=user_id)
     return render(request, "my_answers.html", {"answers" : answers})
 
-@permission_required('add questions')
-def create_question(request):
+@permission_required('add questions') #Права никому не выдавал
+def create_question(request):        #=> могут только суперюзеры
     error = ''
     form = CreateQuestion()
     if request.method == 'POST':
@@ -44,11 +43,10 @@ def create_question(request):
         'form' : form,
         'error' : error
     }
-
     return render(request,"create_question.html",data)
 
-@permission_required('add quizzes')
-def create_quiz(request):
+@permission_required('add quizzes') #Права никому не выдавал
+def create_quiz(request):          #=> могут только суперюзеры
     error = ''
     form = CreateQuiz()
     if request.method == 'POST':
@@ -64,7 +62,6 @@ def create_quiz(request):
         'form' : form,
         'error' : error
     }
-
     return render(request,"create_quiz.html",data)
 
 
@@ -98,7 +95,7 @@ class QuizDetailView(DetailView):
             q3ans=q3ans
         )
         CQ.save()
-        pass # TODO: Some response
+        return HttpResponseRedirect("/")
 
 
 class LogoutFormView(FormView):

@@ -1,14 +1,8 @@
 from .models import *
 from django.contrib import admin
-from django.contrib.auth import get_user_model
-from django.contrib.auth.admin import UserAdmin
-
-
-
 
 admin.site.register(Question)
 admin.site.register(CompletedQuiz)
-
 
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
