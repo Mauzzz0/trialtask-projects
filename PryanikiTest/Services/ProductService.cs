@@ -35,5 +35,8 @@ namespace PryanikiTest.Services
 
         public void Remove(string id) => 
             _products.DeleteOne(product => product.Id == id);
+
+        public void Remove() =>
+            _products.DeleteMany(product => true);
     }
 }

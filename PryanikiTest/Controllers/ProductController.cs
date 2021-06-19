@@ -60,10 +60,8 @@ namespace PryanikiTest.Controllers
             }
             
             _productService.Update(id, productIn);
-
-            product = _productService.Get(id);
             
-            return new JsonResult(product);
+            return new OkResult();
         }
 
         // POST: api/Product
@@ -99,7 +97,7 @@ namespace PryanikiTest.Controllers
             
             _productService.Remove(product.Id);
 
-            return new StatusCodeResult(200); 
+            return new OkResult(); 
             // Вместо NoContext() используется кодрезалт200, потому что ноконтекст вернёт статускод204, а
             // библиотеки и другие программы плохо работают с кодами, отличными от 200/500/400,
             // поэтому чаще всего используется лишь стандартный набор кодов, поэтому вернём code OK 
