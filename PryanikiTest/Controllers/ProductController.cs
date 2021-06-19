@@ -6,19 +6,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PryanikiTest.Models;
+using PryanikiTest.Services;
 
 namespace PryanikiTest.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/product")]
     [Produces("application/json")]
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly ProductContext _context;
+        private readonly ProductService _productService;
 
-        public ProductController(ProductContext context)
+        public ProductController(ProductService productService)
         {
-            _context = context;
+            _productService = productService;
         }
 
         // GET: api/Product
@@ -27,64 +28,36 @@ namespace PryanikiTest.Controllers
         /// </summary>
         /// <returns>List of all Products</returns>
         [HttpGet]
-        public async Task<JsonResult> GetProducts()
-        { // Task<ActionResult<IEnumerable<Product>>>
-            JsonResult result;
-            try
-            {
-                result = new JsonResult(await _context.Products.ToListAsync());
-            }
-            catch (Exception ex)
-            {
-                result = new JsonResult(StatusCode(500, ex));
-            }
-
-            return result;
-        }
+        public ActionResult<List<Product>> Get() =>
+            _productService.Get();
 
         // GET: api/Product/5
         [HttpGet("{id}")]
-        public async Task<JsonResult> GetProduct(long id)
-        { // Task<ActionResult<Product>>
-            // var result = await services.GetProduct(); 
-            // var product = await _context.Products.FindAsync(id);
-            //
-            // if (product == null)
-            // {
-            //     return NotFound();
-            // }
+        public ActionResult<Product> Get(string id)
+        {
+            var product = _productService.Get(id);
 
-            // return new JsonResult(result);
-            throw new NotImplementedException();
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return product;
         }
 
         // PUT: api/Product/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(long id, Product product)
+        public IActionResult Update(string id,[FromBody] Product productIn)
         {
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
+            var product = _productService.Get(id);
 
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
+            if (product == null)
             {
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            
+            _productService.Update(id, productIn);
 
             return NoContent();
         }
@@ -92,34 +65,32 @@ namespace PryanikiTest.Controllers
         // POST: api/Product
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public IActionResult Create([FromBody] Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            _productService.Create(product);
 
-            // return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtRoute("GetProduct", new {id = product.Id.ToString()}, product);
         }
 
         // DELETE: api/Product/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(long id)
+        public IActionResult Delete(string id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = _productService.Get(id);
+
             if (product == null)
             {
                 return NotFound();
             }
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            
+            _productService.Remove(product.Id);
 
             return NoContent();
         }
 
-        private bool ProductExists(long id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
+        // private bool ProductExists(long id)
+        // {
+        //     return _context.Products.Any(e => e.Id == id);
+        // }
     }
 }

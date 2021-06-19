@@ -12,7 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using PryanikiTest.Base;
 using PryanikiTest.Models;
+using PryanikiTest.Services;
 
 namespace PryanikiTest
 {
@@ -29,7 +32,10 @@ namespace PryanikiTest
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<ProductContext>(opt => opt.UseInMemoryDatabase("ProductsList"));
+            services.Configure<ProductDatabaseSettings>(Configuration.GetSection(nameof(ProductDatabaseSettings)));
+            services.AddSingleton<IProductDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ProductDatabaseSettings>>().Value);
+            services.AddSingleton<ProductService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
