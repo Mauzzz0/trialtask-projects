@@ -1,10 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PryanikiTest.Models;
 using PryanikiTest.Services;
 
@@ -21,8 +16,7 @@ namespace PryanikiTest.Controllers
         {
             _productService = productService;
         }
-
-        // GET: api/Product
+        
         /// <summary>
         /// List of all Products
         /// </summary>
@@ -30,8 +24,12 @@ namespace PryanikiTest.Controllers
         [HttpGet]
         public ActionResult<List<Product>> Get() =>
             _productService.Get();
-
-        // GET: api/Product/5
+        
+        /// <summary>
+        /// Get one product
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>One product</returns>
         [HttpGet("{id}")]
         public ActionResult<Product> Get(string id)
         {
@@ -44,37 +42,53 @@ namespace PryanikiTest.Controllers
 
             return product;
         }
-
-        // PUT: api/Product/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
+        /// <summary>
+        /// Update one product
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="productIn">New product in body json</param>
+        /// <returns>Updated product</returns>
         [HttpPut("{id}")]
-        public IActionResult Update(string id,[FromBody] Product productIn)
+        public ActionResult Update(string id,[FromBody] Product productIn)
         {
             var product = _productService.Get(id);
 
             if (product == null)
             {
-                return NotFound();
+                return new JsonResult(NotFound());
             }
             
             _productService.Update(id, productIn);
 
-            return NoContent();
+            product = _productService.Get(id);
+            
+            return new JsonResult(product);
         }
 
         // POST: api/Product
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create new product
+        /// </summary>
+        /// <param name="product">Product in body json</param>
+        /// <returns>New product</returns>
         [HttpPost]
-        public IActionResult Create([FromBody] Product product)
+        public ActionResult Create([FromBody] Product product)
         {
             _productService.Create(product);
-
-            return CreatedAtRoute("GetProduct", new {id = product.Id.ToString()}, product);
+            
+            return new JsonResult(product);
         }
 
         // DELETE: api/Product/5
+        /// <summary>
+        /// Delete one product
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <returns>NoContent</returns>
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public ActionResult Delete(string id)
         {
             var product = _productService.Get(id);
 
@@ -85,7 +99,10 @@ namespace PryanikiTest.Controllers
             
             _productService.Remove(product.Id);
 
-            return NoContent();
+            return new StatusCodeResult(200); 
+            // Вместо NoContext() используется кодрезалт200, потому что ноконтекст вернёт статускод204, а
+            // библиотеки и другие программы плохо работают с кодами, отличными от 200/500/400,
+            // поэтому чаще всего используется лишь стандартный набор кодов, поэтому вернём code OK 
         }
 
         // private bool ProductExists(long id)

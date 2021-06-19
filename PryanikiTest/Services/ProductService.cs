@@ -1,13 +1,6 @@
-using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PryanikiTest.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using MongoDB.Driver;
-using System.Threading.Tasks;
 using PryanikiTest.Base;
 
 namespace PryanikiTest.Services
@@ -26,7 +19,7 @@ namespace PryanikiTest.Services
             _products.Find(product => true).ToList();
 
         public Product Get(string id) =>
-            _products.Find<Product>(product => product.Id == id).FirstOrDefault();
+            _products.Find(product => product.Id == id).FirstOrDefault();
 
         public Product Create(Product product)
         {
@@ -34,8 +27,8 @@ namespace PryanikiTest.Services
             return product;
         }
 
-        public void Update(string id, Product productIn) =>
-            _products.ReplaceOne(product => product.Id == id, productIn);
+        public void Update(string id, Product productIn) => 
+            _products.ReplaceOne(prod => prod.Id == id, productIn);
 
         public void Remove(Product productIn) =>
             _products.DeleteOne(product => product.Id == productIn.Id);
