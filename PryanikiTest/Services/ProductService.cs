@@ -1,5 +1,6 @@
 using PryanikiTest.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 using PryanikiTest.Base;
 
@@ -24,23 +25,49 @@ namespace PryanikiTest.Services
             _products.Find(product => true).ToList();
         
         /// <summary>
+        /// Get all records of product ASYNC
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IAsyncCursor<Product>> GetAsync() =>
+           await _products.FindAsync(product => true);
+        
+        /// <summary>
         /// Get one product by id
         /// </summary>
         /// <param name="id">String id</param>
         /// <returns>Instance of product</returns>
         public Product Get(string id) =>
             _products.Find(product => product.Id == id).FirstOrDefault();
+
+        /// <summary>
+        /// Get one product by id ASYNC
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<Product> GetAsync(string id)
+        {
+            var result = await _products.FindAsync(product => product.Id == id);
+            
+            return result.FirstOrDefault();
+        }
+            
         
         /// <summary>
         /// Create new product
         /// </summary>
         /// <param name="product">New product</param>
         /// <returns>Instance of created product</returns>
-        public Product Create(Product product)
-        {
+        public void Create(Product product) => 
             _products.InsertOne(product);
-            return product;
-        }
+        
+        
+        /// <summary>
+        /// Create new product ASYNC
+        /// </summary>
+        /// <param name="product">New product</param>
+        /// <returns>Instance of created product</returns>
+        public async Task CreateAsync(Product product) => 
+            await _products.InsertOneAsync(product);
         
         /// <summary>
         /// Update product
@@ -49,6 +76,14 @@ namespace PryanikiTest.Services
         /// <param name="productIn">Updated product</param>
         public void Update(string id, Product productIn) => 
             _products.ReplaceOne(prod => prod.Id == id, productIn);
+        
+        /// <summary>
+        /// Update product ASYNC
+        /// </summary>
+        /// <param name="id">String id</param>
+        /// <param name="productIn">Updated product</param>
+        public async Task UpdateAsync(string id, Product productIn) => 
+            await _products.ReplaceOneAsync(prod => prod.Id == id, productIn);
         
         /// <summary>
         /// Remove product by instance
@@ -63,6 +98,13 @@ namespace PryanikiTest.Services
         /// <param name="id">String id</param>
         public void Remove(string id) => 
             _products.DeleteOne(product => product.Id == id);
+        
+        /// <summary>
+        /// Remove product by id ASYNC
+        /// </summary>
+        /// <param name="id">String id</param>
+        public async Task RemoveAsync(string id) => 
+            await _products.DeleteOneAsync(product => product.Id == id);
         
         /// <summary>
         /// Remove all records

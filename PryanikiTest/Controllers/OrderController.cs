@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PryanikiTest.Models;
 using PryanikiTest.Services;
@@ -22,8 +23,8 @@ namespace PryanikiTest.Controllers
         /// </summary>
         /// <returns>List of all orders</returns>
         [HttpGet]
-        public ActionResult<List<Order>> Get() =>
-            _orderService.Get();
+        public async Task<ActionResult<List<Order>>> Get() =>
+            await _orderService.GetAsync();
         
         /// <summary>
         /// Get one order
@@ -31,9 +32,9 @@ namespace PryanikiTest.Controllers
         /// <param name="id">Id</param>
         /// <returns>One order</returns>
         [HttpGet("{id}")]
-        public ActionResult<Order> Get(string id)
+        public async Task<ActionResult<Order>> Get(string id)
         {
-            var order = _orderService.Get(id);
+            var order = await _orderService.GetAsync(id);
 
             if (order == null)
             {
@@ -51,7 +52,7 @@ namespace PryanikiTest.Controllers
         /// <returns>Status 200</returns>
         [HttpPut("{id}")]
         public ActionResult Update(string id,[FromBody] Order orderIn)
-        {
+        { // Not Implemented
             var order = _orderService.Get(id);
 
             if (order == null)
@@ -70,9 +71,9 @@ namespace PryanikiTest.Controllers
         /// <param name="order">Order in body json</param>
         /// <returns>New order</returns>
         [HttpPost]
-        public ActionResult Create([FromBody] Order order)
+        public async Task<ActionResult> Create([FromBody] Order order)
         {
-            _orderService.Create(order);
+            await _orderService.CreateAsync(order);
             
             return new JsonResult(order);
         }
@@ -83,9 +84,9 @@ namespace PryanikiTest.Controllers
         /// <param name="id">Id</param>
         /// <returns>NoContent</returns>
         [HttpDelete("{id}")]
-        public ActionResult Delete(string id)
-        {
-            var order = _orderService.Get(id);
+        public async Task<ActionResult> Delete(string id)
+        { 
+            var order = await _orderService.GetAsync(id);
 
             if (order == null)
             {

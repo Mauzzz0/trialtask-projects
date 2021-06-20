@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MongoDB.Driver;
 using PryanikiTest.Base;
 using PryanikiTest.Models;
@@ -25,7 +26,18 @@ namespace PryanikiTest.Services
         /// <returns>All orders</returns>
         public List<Order> Get() =>
             _orders.Find(order => true).ToList();
-        
+
+        /// <summary>
+        /// Get all orders ASYNC
+        /// </summary>
+        /// <returns>All orders</returns>
+        public async Task<List<Order>> GetAsync()
+        {
+            var result = await _orders.FindAsync(order => true);
+            
+            return result.ToList();
+        }
+
         /// <summary>
         /// Get order by id
         /// </summary>
@@ -33,6 +45,18 @@ namespace PryanikiTest.Services
         /// <returns>Instance of order</returns>
         public Order Get(string id) =>
             _orders.Find(order => order.Id == id).FirstOrDefault();
+
+        /// <summary>
+        /// Get order by id ASYNC
+        /// </summary>
+        /// <param name="id">String id</param>
+        /// <returns>Instance of order</returns>
+        public async Task<Order> GetAsync(string id)
+        {
+            var result = await _orders.FindAsync(order => order.Id == id);
+            
+            return result.FirstOrDefault();
+        }
         
         /// <summary>
         /// Create new order
@@ -71,6 +95,44 @@ namespace PryanikiTest.Services
         }
         
         /// <summary>
+        /// Create new order ASYNC
+        /// </summary>
+        /// <param name="order">Instance of order</param>
+        /// <returns>New order</returns>
+        /// <exception cref="Exception">If incorrect quantity</exception>
+        public async Task<Order> CreateAsync(Order order)
+        {
+            for (int i = 0; i < order.ProductId.Length; i++)
+            {
+                var result = await _productService.GetAsync(order.ProductId[i]);
+                
+                if (order.Quantity[i] > result.Quantity)
+                {
+                    throw new Exception("Incorrect quantity");
+                    /* Здесь неправильно, я понимаю. Отсюда должен вернуться
+                    STATUSCODE: 400
+                    {
+                        message: "Incorrect quantity of product"
+                    } */
+                }
+            }
+            // Возможно, не лучшее решение - сначала перебирать все товары из списка с проверкой на правильность количества,
+            // а только потом уменьшать его кол-во в коллекции с товарами и апдейтить.
+            // Как вариант, объединить всё в одном цикле, сразу уменьшать кол-во товара, а при возникновении ошибки 
+            // отменять все выполненные операции и возвращать кол-во.
+            for (int i = 0; i < order.ProductId.Length; i++)
+            {
+                var product = await _productService.GetAsync(order.ProductId[i]);
+                product.Quantity -= order.Quantity[i];
+                await _productService.UpdateAsync(order.ProductId[i], product);
+            }
+            
+            await _orders.InsertOneAsync(order);
+            
+            return order;
+        }
+        
+        /// <summary>
         /// Update order
         /// </summary>
         /// <param name="id">String id</param>
@@ -89,7 +151,25 @@ namespace PryanikiTest.Services
         
             
         /// <summary>
-        /// Remove order by id
+        /// Remove order by id ASYNC
+        /// </summary>
+        /// <param name="id">String id</param>
+        public async Task RemoveAsync(string id)
+        {
+            var order = await GetAsync(id);
+            
+            for (int i = 0; i < order.ProductId.Length; i++)
+            {
+                var product = await _productService.GetAsync(order.ProductId[i]);
+                product.Quantity += order.Quantity[i];
+                await _productService.UpdateAsync(order.ProductId[i], product);
+            }
+            
+            await _orders.DeleteOneAsync(ord => ord.Id == id);
+        }
+        
+        /// <summary>
+        /// Remove order by id ASYNC
         /// </summary>
         /// <param name="id">String id</param>
         public void Remove(string id)
