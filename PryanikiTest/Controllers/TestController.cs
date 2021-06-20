@@ -16,6 +16,10 @@ namespace PryanikiTest.Controllers
             _productService = productService;
         }
         
+        /// <summary>
+        /// Create test set of products
+        /// </summary>
+        /// <returns>Json message</returns>
         [HttpPost]
         public ActionResult Create()
         {
@@ -28,7 +32,11 @@ namespace PryanikiTest.Controllers
             
             return new JsonResult("Created various products");
         }
-
+        
+        /// <summary>
+        /// Wipe product collection
+        /// </summary>
+        /// <returns>Json message</returns>
         [HttpDelete]
         public ActionResult Delete()
         {

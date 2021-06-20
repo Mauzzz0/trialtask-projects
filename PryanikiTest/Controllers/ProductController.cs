@@ -63,9 +63,7 @@ namespace PryanikiTest.Controllers
             
             return new OkResult();
         }
-
-        // POST: api/Product
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         /// <summary>
         /// Create new product
         /// </summary>
@@ -78,8 +76,7 @@ namespace PryanikiTest.Controllers
             
             return new JsonResult(product);
         }
-
-        // DELETE: api/Product/5
+        
         /// <summary>
         /// Delete one product
         /// </summary>
@@ -102,10 +99,5 @@ namespace PryanikiTest.Controllers
             // библиотеки и другие программы плохо работают с кодами, отличными от 200/500/400,
             // поэтому чаще всего используется лишь стандартный набор кодов, поэтому вернём code OK 
         }
-
-        // private bool ProductExists(long id)
-        // {
-        //     return _context.Products.Any(e => e.Id == id);
-        // }
     }
 }
