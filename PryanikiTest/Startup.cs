@@ -27,6 +27,7 @@ namespace PryanikiTest
             services.AddSingleton<IProductDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<ProductDatabaseSettings>>().Value);
             services.AddSingleton<ProductService>();
+            services.AddSingleton<OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
