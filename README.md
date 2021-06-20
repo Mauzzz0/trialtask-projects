@@ -2,8 +2,8 @@
 ###### ASP.NET API, cloud MongoDB
 ###### Database in cloud.mongodb.com allows `all connections`. Just download repo and test API.
 ### Models:
-#### Product - `Id`, `Title`, `Description`, `Price`, `Quantity`
-#### Order - `Id`, `ProductId` array, `Quantity` array
+#### Product - `Id`, `Title`, `Description`, `Price`, `Quantity`. With sync/async service.
+#### Order - `Id`, `ProductId` array, `Quantity` array. With sync/async service.
 ## Endpoints
 | PATH ( `api/` )| METHOD | ACTION |
 |----------------|:---------:|----------------:|
