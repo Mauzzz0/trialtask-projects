@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, BelongsTo, belongsTo, column } from "@ioc:Adonis/Lucid/Orm";
+import User from './User';
 
 export default class Song extends BaseModel{
     public static table = 'songs';
@@ -18,6 +19,9 @@ export default class Song extends BaseModel{
 
     @column()
     public singer: string
+
+    @belongsTo(() => User, {foreignKey: 'userId',})
+    public user: BelongsTo<typeof User>
 }
 
 

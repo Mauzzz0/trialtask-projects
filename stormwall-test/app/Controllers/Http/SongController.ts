@@ -1,5 +1,6 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Song from "App/Models/Song";
+import User from "App/Models/User";
 
 
 export default class SongController{
@@ -16,12 +17,19 @@ export default class SongController{
     }
 
     public async Create(ctx: HttpContextContract) {
-        let { title, singer } = ctx.request.body();
+        let { title, singer, user_id } = ctx.request.body();
 
-        await Song.create({
-            title,
-            singer
-        });
+    let song = new Song();
+    song.title = title;
+    song.singer = singer;
+
+    let usr = new User();
+
+    User.$getRelation('songs').pushRelated(usr, song);
+
+
+
+
 
         return {message: 'Created'}
     }

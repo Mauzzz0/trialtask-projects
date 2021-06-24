@@ -1,14 +1,18 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
-export default class Users extends BaseSchema {
-  protected tableName = 'users'
+export default class Songs extends BaseSchema {
+  protected tableName = 'songs'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id').primary()
-      table.string('name').notNullable()
-      table.string('email').unique().notNullable()
-      table.dateTime('birthDate').notNullable()
+      table
+      .integer('user_id')
+      .unsigned()
+      .references('users.id')
+      .onDelete('CASCADE')
+      table.string('title').notNullable()
+      table.string('singer').notNullable()
       table.timestamps(true, true)
     })
   }

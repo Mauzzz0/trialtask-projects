@@ -6,7 +6,8 @@ export default class LogRequest {
         { request }: HttpContextContract,
         next: () => Promise<void>
     ) {
-        Logger.info(`${request.hostname()} ${request.method()}: ${request.url()} `);
+        Logger.info(`${request.hostname()} ${request.method()}: ${request.url()}`);
+        if (JSON.stringify(request.body()) !== '{}') console.log(request.body());
         await next()
     }
 }

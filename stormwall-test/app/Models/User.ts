@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import Song from './Song';
 
 export default class User extends BaseModel{
     public static table = 'users';
@@ -20,7 +21,10 @@ export default class User extends BaseModel{
     public email: string
 
     @column.dateTime() // TODO: date after validator
-    public birthdate: DateTime 
+    public birth_date: DateTime
+
+    @hasMany(() => Song)
+    public songs: HasMany<typeof Song>
 }
 
 
