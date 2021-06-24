@@ -20,7 +20,9 @@ export default class Song extends BaseModel{
     @column()
     public singer: string
 
-    @belongsTo(() => User, {foreignKey: 'userId',})
+    @belongsTo(() => User, {
+        localKey: 'userId'
+    })
     public user: BelongsTo<typeof User>
 }
 

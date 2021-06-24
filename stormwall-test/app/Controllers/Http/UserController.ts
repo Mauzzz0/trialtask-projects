@@ -1,6 +1,7 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Song from "App/Models/Song";
 import User from "App/Models/User";
+import User from "App/Models/User";
 import { DateTime } from "luxon";
 
 export default class UserController{
@@ -21,13 +22,31 @@ export default class UserController{
 
         let birthDate = DateTime.fromFormat(dateBirth, 'dd.mm.yyyy')
         let def = DateTime.now();
-        let user = await User.create({
+        const user = await User.create({
             name,
             email,
             birth_date: def
         })
 
-        user.save();
+        const song1 = await Song.findOrFail(3);
+        const song2 = await Song.findOrFail(4);
+
+        await user.related('songs').createMany([song1, song2]);
+        await user.related('songs').fetchOrCreateMany([song1, song2])
+        //  "E_MISSING_MODEL_ATTRIBUTE: \"User.songs\" expects \"songId\" to exist on \"Song\" model, but is missing",
+        // Но в сонгах существуют эти айди....
+
+        // await user.related('songs').attach([]) СТРОКА ИЗ ВИДЕО, ПОЧЕМУ НЕ РАБОТАЕТ attach
+
+        // const { name, email, dateBirth, songs } = ctx.request.body();
+
+        // let song = await Song.findOrFail(songs[0]);
+
+        // const user = await User.create({
+        //     name,
+        //     email,
+        //     birth_date: def
+        // })
 
         return {message: 'Created'}
     }

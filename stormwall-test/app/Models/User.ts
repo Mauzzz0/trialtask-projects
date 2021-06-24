@@ -23,7 +23,9 @@ export default class User extends BaseModel{
     @column.dateTime() // TODO: date after validator
     public birth_date: DateTime
 
-    @hasMany(() => Song)
+    @hasMany(() => Song, {
+        foreignKey: 'songId'
+    })
     public songs: HasMany<typeof Song>
 }
 
