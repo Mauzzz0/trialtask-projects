@@ -1,7 +1,7 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Song from "App/Models/Song";
 import User from "App/Models/User";
-
+import Database  from '@ioc:Adonis/Lucid/Database';
 
 export default class SongController{
 
@@ -16,20 +16,22 @@ export default class SongController{
         return ctx.response.notFound({ message: 'Id not found' });
     }
 
-    public async Create(ctx: HttpContextContract) {
-        let { title, singer, user_id } = ctx.request.body();
+    public async Create({ request, response }: HttpContextContract) {
+        let { title, singer } = request.body();
+        // const title = request.input('title');
+        // const singer = request.input('singer');
+        // const user_id = request.input('user_id');
 
-    let song = new Song();
-    song.title = title;
-    song.singer = singer;
+        // const user = await User.findOrFail(user_id);
 
-    let usr = new User();
-
-    User.$getRelation('songs').pushRelated(usr, song);
-
+        const song = await Song.create({
+            title,
+            singer
+        })
 
 
-
+        // // await song.related('userId').attach(user1);
+        // await song.related('songs').attach(user1);
 
         return {message: 'Created'}
     }
