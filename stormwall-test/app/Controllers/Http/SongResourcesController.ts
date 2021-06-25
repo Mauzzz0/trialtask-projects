@@ -1,5 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Song from 'App/Models/Song';
+import User from 'App/Models/User';
 import CreateSongValidator from 'App/Validators/CreateSongValidator';
 
 export default class SongResourcesController {
@@ -11,9 +12,11 @@ export default class SongResourcesController {
   public async create ({}: HttpContextContract) {
   }
 
-  public async store ({ request }: HttpContextContract) {  // TODO: Чек на несуществующий user_id
+  public async store ({ request, response }: HttpContextContract) {
     await request.validate(CreateSongValidator);
     const { title, singer, user_id } = request.body();
+    const user = await User.find(user_id);  // Как правильно проверять существует ли user с id=user_id? Нормально ли импортировать модельку и файндить?
+    if (!user) response.abort({ message: `User with id=${user_id} is not exist` })
     const song = await Song.create({
         title,
         singer,
