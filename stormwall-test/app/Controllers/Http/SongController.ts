@@ -1,5 +1,6 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Song from "App/Models/Song";
+import CreateSongValidator from "App/Validators/CreateSongValidator";
 
 export default class SongController{
 
@@ -15,8 +16,9 @@ export default class SongController{
     }
 
     public async Create({ request }: HttpContextContract) {
-        let { title, singer, user_id } = request.body();
+        await request.validate(CreateSongValidator);
 
+        const { title, singer, user_id } = request.body();
 
         const song = await Song.create({
             title,
