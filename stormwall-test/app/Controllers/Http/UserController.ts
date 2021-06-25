@@ -1,6 +1,7 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import User from "App/Models/User";
 import { DateTime } from "luxon";
+import CreateUserValidator from '../../Validators/CreateUserValidator';
 
 export default class UserController{
 
@@ -16,18 +17,18 @@ export default class UserController{
         return response.notFound({ message: 'Id not found' });
     }
 
-    public async Create(ctx: HttpContextContract) {
-        const { name, email, dateBirth } = ctx.request.body();
+    public async Create({request}: HttpContextContract) {
+        await request.validate(CreateUserValidator);
+
+        const { name, email, dateBirth } = request.body();
 
         let birthDate = DateTime.fromFormat(dateBirth, 'dd.mm.yyyy')
-        let def = DateTime.now();
 
-        const user = await User.create({
+        await User.create({
             name,
             email,
-            birth_date: def
+            birth_date: birthDate
         })
-
 
         return {message: 'Created'}
     }
