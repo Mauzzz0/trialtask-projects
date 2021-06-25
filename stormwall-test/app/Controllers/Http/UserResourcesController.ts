@@ -1,7 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User';
 import CreateUserValidator from 'App/Validators/CreateUserValidator';
-import IdIsNumberValidator from 'App/Validators/IdIsNumberValidator';
 import { DateTime } from 'luxon';
 
 export default class UserResourcesController {
@@ -26,7 +25,9 @@ export default class UserResourcesController {
   }
 
   public async show ({ response, params }: HttpContextContract) {
-    const user = await User.find(params['id']);
+    const id = Number(params['id']) || undefined;  // Понятное дело id это далеко не всегда number, особенно в NoSQL, это просто для практики.
+    if (!id) response.abort({ message: 'id is not a number' })
+    const user = await User.find(id);
     await user?.load('songs');
     if (user) return user
     return response.notFound({ message: 'Id not found' });
@@ -44,7 +45,9 @@ export default class UserResourcesController {
   }
 
   public async destroy ({ response, params }: HttpContextContract) {
-    const user = await User.find(params['id']);
+    const id = Number(params['id']) || undefined;  // Понятное дело id это далеко не всегда number, особенно в NoSQL, это просто для практики.
+    if (!id) response.abort({ message: 'id is not a number' })
+    const user = await User.find(id);
     if (!user) return response.notFound({ message: 'Id not found' })
     user.delete();
     return {message: 'Deleted'}

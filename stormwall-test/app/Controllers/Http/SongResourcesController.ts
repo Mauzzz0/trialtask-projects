@@ -1,7 +1,6 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Song from 'App/Models/Song';
 import CreateSongValidator from 'App/Validators/CreateSongValidator';
-import IdIsNumberValidator from 'App/Validators/IdIsNumberValidator';
 
 export default class SongResourcesController {
   public async index ({}: HttpContextContract) {
@@ -12,7 +11,7 @@ export default class SongResourcesController {
   public async create ({}: HttpContextContract) {
   }
 
-  public async store ({ request }: HttpContextContract) {
+  public async store ({ request }: HttpContextContract) {  // TODO: Чек на несуществующий user_id
     await request.validate(CreateSongValidator);
     const { title, singer, user_id } = request.body();
     const song = await Song.create({
@@ -25,7 +24,9 @@ export default class SongResourcesController {
   }
 
   public async show ({ response, params }: HttpContextContract) {
-    const song = await Song.find(params['id']);
+    const id = Number(params['id']) || undefined;  // Понятное дело id это далеко не всегда number, особенно в NoSQL, это просто для практики.
+    if (!id) response.abort({ message: 'id is not a number' })
+    const song = await Song.find(id);
     if (song) return song
     return response.notFound({ message: 'Id not found' });
   }
@@ -42,7 +43,9 @@ export default class SongResourcesController {
   }
 
   public async destroy ({ response, params }: HttpContextContract) {
-    const song = await Song.find(params['id']);
+    const id = Number(params['id']) || undefined;  // Понятное дело id это далеко не всегда number, особенно в NoSQL, это просто для практики.
+    if (!id) response.abort({ message: 'id is not a number' })
+    const song = await Song.find(id);
     if (!song) return response.notFound({ message: 'Id not found' })
     song.delete();
     return {message: 'Deleted'}
