@@ -42,7 +42,7 @@ export default class SongResourcesController {
     // let { title, singer } = ctx.request.body();
     // if (!song) return ctx.response.notFound({ message: 'Id not found' }) 
     // song.merge({ title, singer }).save();
-    return response.notFound({ message: 'NOT IMPLEMENTED YET' })
+    return response.notImplemented({ message: 'NOT IMPLEMENTED YET' })
   }
 
   public async destroy ({ response, params }: HttpContextContract) {

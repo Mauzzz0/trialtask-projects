@@ -6,8 +6,8 @@ import { DateTime } from 'luxon'
 
 const BASE_URL = `http://${process.env.HOST}:${process.env.PORT}`
 
-test.group('Welcome', () => {
-  test('ensure user created with true values', async (assert) => {
+test.group('', () => {
+  test('Queries to database', async (assert) => {
         let now = DateTime.now();  // Проверка на изменение значений при сохранении
 
         const user = new User();
@@ -158,5 +158,37 @@ test.group('Welcome', () => {
 
         const res = await supertest(BASE_URL).get(`/api/song/${songid}`).expect(404);
         //assert.equal(song.$isDeleted, true);    Выдаёт false при каскадном удалении.
+    })
+
+
+})
+
+test.group('Correct bodies and parameters', () => {
+
+    test('NotFound return my own notFound with message', async (assert) => {
+        const { body } = await supertest(BASE_URL).get('/3ipa/a2pi').expect(404) 
+        assert.exists(body.message);  // Нет строго возрата текста для данной ошибки => нет смысла жёстко проверять содержание сообщения.
+    })
+
+    test(`[GET/POST]: /api/song/a return 'id is not a number'`, async (assert) =>{
+        const { body } = await supertest(BASE_URL).get('/api/song/a').expect(400)
+        await supertest(BASE_URL).delete('/api/song/a').expect(400)
+        assert.exists(body.message);  // Нет строго возрата текста для данной ошибки => нет смысла жёстко проверять содержание сообщения.
+    })
+  
+    test(`[GET/POST]: /api/user/a return 'id is not a number'`, async (assert) =>{
+        const { body } = await supertest(BASE_URL).get('/api/user/a').expect(400)
+        await supertest(BASE_URL).delete('/api/user/a').expect(400)
+        assert.exists(body.message);  // Нет строго возрата текста для данной ошибки => нет смысла жёстко проверять содержание сообщения.
+    })
+
+    test(`[PUT]: /api/user/a return 'is not implemented'`, async (assert) =>{
+        const { body } = await supertest(BASE_URL).put('/api/song/a').expect(501)
+        assert.exists(body.message);  // Нет строго возрата текста для данной ошибки => нет смысла жёстко проверять содержание сообщения.
+    })
+
+    test(`[PUT]: /api/song/a return 'is not implemented'`, async (assert) =>{
+        const { body } = await supertest(BASE_URL).put('/api/song/a').expect(501)
+        assert.exists(body.message);  // Нет строго возрата текста для данной ошибки => нет смысла жёстко проверять содержание сообщения.
     })
 })
