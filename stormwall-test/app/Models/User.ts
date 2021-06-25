@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { BaseModel, column, HasMany, hasMany } from "@ioc:Adonis/Lucid/Orm";
+import { BaseModel, column, HasMany, hasMany, manyToMany } from "@ioc:Adonis/Lucid/Orm";
 import Song from './Song';
 
 export default class User extends BaseModel{
@@ -24,9 +24,12 @@ export default class User extends BaseModel{
     public birth_date: DateTime
 
     @hasMany(() => Song, {
-        foreignKey: 'songId'
+        foreignKey: 'user_id'
     })
     public songs: HasMany<typeof Song>
+ 
+    // @manyToMany(() => Song) 
+    // public songs1: HasMany<typeof Song>
 }
 
 

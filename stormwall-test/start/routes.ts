@@ -36,6 +36,8 @@ Route.group(() => {
     Route.get('/:id', 'UserController.getById');
     Route.put('/:id', 'UserController.Update');
     Route.delete('/:id', 'UserController.Delete');
+    Route.resource('user', 'UserResourcesController').apiOnly();
+    Route.resource('user.song', 'UserSongResourcesController').only(['index', 'destroy', 'show']);
   }).prefix('/user')
 
 }).prefix('/api')

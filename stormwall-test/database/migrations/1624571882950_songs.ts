@@ -8,7 +8,7 @@ export default class Songs extends BaseSchema {
       table.increments('id').primary()
       table.string('title').notNullable()
       table.string('singer').notNullable()
-      table.integer('userId').unsigned().nullable().references('id').inTable('users')
+      table.integer('user_id').unsigned().nullable().references('id').inTable('users').onDelete('CASCADE')
       table.timestamps(true, true)
     })
   }
