@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectError';
 import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
 import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
-import { User } from 'src/layers/storage/mssql/entities/User';
+import { User } from 'src/layers/storage/postgres/entities/User';
 import { Repository } from 'typeorm';
 @Injectable()
 export class UsersService {
