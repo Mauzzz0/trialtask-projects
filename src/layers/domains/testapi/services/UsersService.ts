@@ -9,12 +9,24 @@ export class UsersService {
 
   async findOne(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
     const r = await this.usersRepository.findOne(filter);
-    console.log('find');
+    console.log('find pwd');
     if (!r) {
       throw new NotFoundException();
     }
 
     return r;
+  }
+
+  async findOneWithoutPwd(filter: Record<string, any>): Promise<Omit<User, 'uid' | 'password'>> {
+    const r = await this.usersRepository.findOne(filter);
+    console.log('find no pwd');
+    if (!r) {
+      throw new NotFoundException();
+    }
+
+    const { password, ...res } = r;
+
+    return res;
   }
 
   async createOne(user: Omit<User, 'uid'>) {
