@@ -24,12 +24,6 @@ export class UserController {
     return this.userService.findOne({ username: req.user.username });
   }
 
-  @Post('')
-  public async create(@Body() body): Promise<any> {
-    const result = await this.userService.createOne(body);
-    return { result };
-  }
-
   @Put(':id')
   public async update(): Promise<any> {
     throw new NotImplementedException();
