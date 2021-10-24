@@ -5,7 +5,7 @@ import { ShowRoutesAtStart } from './main/helpers/ShowRoutes';
 import 'reflect-metadata';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   SetupSwagger(app);
 
   await app.listen(3000);
