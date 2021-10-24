@@ -14,20 +14,19 @@ import { Roles } from 'src/layers/domains/testapi/rbac/decorators/Roles';
 import { Role } from 'src/layers/domains/testapi/rbac/roles/roles';
 import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
   constructor(private userService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   public async profile(@Request() req): Promise<any> {
     return this.userService.findOne({ username: req.user.username });
   }
 
-  @Roles(Role.SAdmin)
   @Post('')
-  public async create(@Body() req): Promise<any> {
-    const result = await this.userService.createOne(req);
+  public async create(@Body() body): Promise<any> {
+    const result = await this.userService.createOne(body);
     return { result };
   }
 
