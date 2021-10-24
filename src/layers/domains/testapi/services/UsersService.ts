@@ -1,8 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EmailIncorrect } from 'src/common/rules/exceptions/EmailIncorrectError';
+import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
+import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/mssql/entities/User';
 import { Repository } from 'typeorm';
-
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
@@ -30,6 +32,20 @@ export class UsersService {
   }
 
   async createOne(user: Omit<User, 'uid'>) {
+    // todo
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const passwordValidator = require('password-validator');
+    const schema = new passwordValidator();
+
+    schema.has().uppercase().has().lowercase().has().digits(1).has().not().spaces().is().min(8);
+
+    if (!schema.validate(user.password)) {
+      throw new PasswordToWeakError();
+    }
+    if (!new RegExp(EmailRegex, 'gi').test(user.email)) {
+      throw new EmailIncorrect();
+    }
+
     await this.usersRepository.save(user);
     console.log('Добавлен пользователь: ', user);
     return true;

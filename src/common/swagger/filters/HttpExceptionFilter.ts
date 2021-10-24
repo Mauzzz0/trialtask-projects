@@ -10,10 +10,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const {
-      message,
-      constructor: { name: code },
-    } = exception;
+    const code = exception['code'] || 'UNTRACKED_APP_ERROR';
+
+    const { message } = exception;
 
     const responseObject: ErrorResponse = {
       status: SuccessOrErrorEnum.Error,
