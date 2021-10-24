@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailIncorrect } from 'src/common/rules/exceptions/EmailIncorrectError';
+import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectError';
 import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
 import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/mssql/entities/User';
@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
 
-  async findOne(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
+  async findOneComp(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
     const r = await this.usersRepository.findOne(filter);
     console.log('find pwd');
     if (!r) {
@@ -19,7 +19,9 @@ export class UsersService {
     return r;
   }
 
-  async findOneWithoutPwd(filter: Record<string, any>): Promise<Omit<User, 'uid' | 'password'>> {
+  async findOneCompWithoutPwd(
+    filter: Record<string, any>,
+  ): Promise<Omit<User, 'uid' | 'password'>> {
     const r = await this.usersRepository.findOne(filter);
     console.log('find no pwd');
     if (!r) {
@@ -29,6 +31,12 @@ export class UsersService {
     const { password, ...res } = r;
 
     return res;
+  }
+
+  async findOneFull(filter: Record<string, any>): Promise<any> {
+    const r = await this.usersRepository.findOne(filter);
+    console.log(r);
+    return null;
   }
 
   async createOne(user: Omit<User, 'uid' | 'tags'>) {
@@ -43,7 +51,7 @@ export class UsersService {
       throw new PasswordToWeakError();
     }
     if (!new RegExp(EmailRegex, 'gi').test(user.email)) {
-      throw new EmailIncorrect();
+      throw new EmailIncorrectError();
     }
 
     await this.usersRepository.save(user);

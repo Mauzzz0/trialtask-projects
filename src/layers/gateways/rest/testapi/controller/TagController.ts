@@ -12,16 +12,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
-import { ProfileDto } from 'src/common/layers/contracts/dto/testapi/ProfileDto';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
-import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels(ProfileDto)
+@ApiExtraModels()
 @ApiBearerAuth()
 @ApiTags('Tag')
 @Controller('tag')

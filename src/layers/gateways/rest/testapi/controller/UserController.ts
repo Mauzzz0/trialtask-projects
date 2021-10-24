@@ -12,7 +12,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
-import { ProfileDto } from 'src/common/layers/contracts/dto/testapi/ProfileDto';
+import { UserWithTagsDto } from 'src/common/layers/contracts/dto/testapi/UserWithTagsDto';
+import { UserWithUidAndPasswordDto } from 'src/common/layers/contracts/dto/testapi/UserWithUidAndPasswordDto';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
@@ -22,19 +23,20 @@ import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels(ProfileDto)
+@ApiExtraModels(UserWithUidAndPasswordDto, UserWithTagsDto)
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private userService: UsersService) {}
 
-  @ApiOkResponse(ProfileDto)
+  @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@Request() req): Promise<any> {
-    return this.userService.findOne({ username: req.user.username });
+    return this.userService.findOneFull({ username: req.user.username });
   }
 
+  @ApiOkResponse(UserWithUidAndPasswordDto)
   @Put('')
   public async update(@Request() req): Promise<any> {
     throw new NotImplementedException();

@@ -1,10 +1,10 @@
-import { Entity, Column } from 'typeorm';
+// import { Entity, Column } from 'typeorm';
 
-@Entity()
-export class UserTag {
-  @Column({ nullable: false, default: 'null' })
-  userUid: string;
+// @Entity()
+// export class UserTag {
+//   @Column({ nullable: false, default: 'null' })
+//   userUid: string;
 
-  @Column({ nullable: false, default: 'null' })
-  tagId: number;
-}
+//   @Column({ nullable: false, default: 'null' })
+//   tagId: number;
+// }

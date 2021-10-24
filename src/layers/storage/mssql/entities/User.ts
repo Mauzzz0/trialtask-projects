@@ -15,6 +15,6 @@ export class User {
   @Column({ nullable: false, default: 'null' })
   password: string;
 
-  @OneToMany((type) => Tag, (tag) => tag.creator, { cascade: true })
+  @OneToMany(() => Tag, (tag) => tag.creator, { cascade: true })
   tags: Tag[];
 }
