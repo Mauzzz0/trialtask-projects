@@ -24,7 +24,7 @@ export class UsersService {
       return true;
     } catch (e: any) {
       console.log('Ошибка добавления пользователя: ', params);
-      return { code: e.code, message: e.originalError.info.message };
+      return { e };
     }
   }
 }
