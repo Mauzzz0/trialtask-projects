@@ -30,13 +30,8 @@ export class UsersService {
   }
 
   async createOne(user: Omit<User, 'uid'>) {
-    try {
-      await this.usersRepository.save(user);
-      console.log('Добавлен пользователь: ', user);
-      return true;
-    } catch (e: any) {
-      console.log('Ошибка добавления пользователя: ', user);
-      return { e };
-    }
+    await this.usersRepository.save(user);
+    console.log('Добавлен пользователь: ', user);
+    return true;
   }
 }
