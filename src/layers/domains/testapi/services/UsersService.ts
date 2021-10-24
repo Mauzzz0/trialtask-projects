@@ -31,7 +31,7 @@ export class UsersService {
     return res;
   }
 
-  async createOne(user: Omit<User, 'uid'>) {
+  async createOne(user: Omit<User, 'uid' | 'tags'>) {
     // todo
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');

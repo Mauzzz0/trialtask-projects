@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Tag } from './Tag';
 
 @Entity()
 export class User {
@@ -13,4 +14,7 @@ export class User {
 
   @Column({ nullable: false, default: 'null' })
   password: string;
+
+  @OneToMany((type) => Tag, (tag) => tag.creator, { cascade: true })
+  tags: Tag[];
 }
