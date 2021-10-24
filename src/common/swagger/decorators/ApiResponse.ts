@@ -15,7 +15,6 @@ export const ApiResponse = <TModel extends Type<any>>(
         oneOf: [
           {
             properties: {
-              trackingId: { type: 'string' },
               status: { type: 'string', default: status },
               payload: {
                 $ref: getSchemaPath(PayloadType),

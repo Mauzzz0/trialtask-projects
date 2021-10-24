@@ -10,7 +10,6 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(PayloadType: TMod
         allOf: [
           {
             properties: {
-              trackingId: { type: 'string' },
               status: { type: 'string', default: SuccessOrErrorEnum.Ok },
               results: {
                 type: 'array',
