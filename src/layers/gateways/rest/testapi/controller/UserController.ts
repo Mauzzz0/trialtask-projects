@@ -33,7 +33,8 @@ export class UserController {
   @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@Request() req): Promise<any> {
-    return this.userService.findOneFull({ username: req.user.username });
+    return this.userService.testFind({ username: req.user.username });
+    // return this.userService.findOneFull({ username: req.user.username });
   }
 
   @ApiOkResponse(UserWithUidAndPasswordDto)

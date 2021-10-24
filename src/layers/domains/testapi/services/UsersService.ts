@@ -39,6 +39,22 @@ export class UsersService {
     return null;
   }
 
+  async testFind(where: { username: string }): Promise<any> {
+    const [rows] = await this.usersRepository.find({
+      where,
+      join: {
+        alias: 'user',
+        leftJoinAndSelect: {
+          tags: 'user.tags',
+        },
+      },
+    });
+
+    console.log(rows);
+
+    return rows;
+  }
+
   async createOne(user: Omit<User, 'uid' | 'tags'>) {
     // todo
     // eslint-disable-next-line @typescript-eslint/no-var-requires
