@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
 
-  async findOne(filter: Record<string, any>): Promise<Omit<User, 'id'>> {
+  async findOne(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
     const r = await this.usersRepository.findOne(filter);
     console.log('find');
     if (!r) {
@@ -17,13 +17,13 @@ export class UsersService {
     return r;
   }
 
-  async createOne(params: { id: number; role_id: number; username: string; password: string }) {
+  async createOne(user: Omit<User, 'uid'>) {
     try {
-      await this.usersRepository.save(params);
-      console.log('Добавлен пользователь: ', params);
+      await this.usersRepository.save(user);
+      console.log('Добавлен пользователь: ', user);
       return true;
     } catch (e: any) {
-      console.log('Ошибка добавления пользователя: ', params);
+      console.log('Ошибка добавления пользователя: ', user);
       return { e };
     }
   }
