@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 export const ShowRoutesAtStart = (app: INestApplication) => {
   const server = app.getHttpServer();
   const router = server._events.request._router;
+  const padding = 7;
 
   router.stack
     .map((layer) => {
@@ -19,7 +20,11 @@ export const ShowRoutesAtStart = (app: INestApplication) => {
     .map((item) =>
       console.log(
         `[${item.route.method.toUpperCase()}]` +
-          ' '.repeat(5 - item.route.method.toUpperCase().length) +
+          ' '.repeat(
+            padding - item.route.method.toUpperCase().length > 0
+              ? padding - item.route.method.toUpperCase().length
+              : 0,
+          ) +
           `${item.route.path}`,
       ),
     );

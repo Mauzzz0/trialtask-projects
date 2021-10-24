@@ -17,46 +17,34 @@ import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/intercepto
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
-import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
 @ApiExtraModels(ProfileDto)
 @ApiBearerAuth()
-@ApiTags('User')
-@Controller('user')
-export class UserController {
-  constructor(private userService: UsersService) {}
+@ApiTags('Tag')
+@Controller('tag')
+export class TagController {
+  // constructor(private userService: UsersService) {}
 
-  @ApiOkResponse(ProfileDto)
-  @Get('')
-  public async show(@Request() req): Promise<any> {
-    return this.userService.findOne({ username: req.user.username });
+  @Post('')
+  public async create(@Request() req): Promise<any> {
+    throw new NotImplementedException();
   }
 
-  @Put('')
+  @Get('/:id')
+  public async index(@Request() req): Promise<any> {
+    throw new NotImplementedException();
+  }
+
+  @Put('/:id')
   public async update(@Request() req): Promise<any> {
     throw new NotImplementedException();
   }
 
-  @Delete('')
+  @Delete('/:id')
   public async destroy(@Request() req): Promise<any> {
-    throw new NotImplementedException();
-  }
-
-  @Post('/tag')
-  public async createTag(@Request() req): Promise<any> {
-    throw new NotImplementedException();
-  }
-
-  @Delete('/tag/:id')
-  public async destroyTag(@Request() req): Promise<any> {
-    throw new NotImplementedException();
-  }
-
-  @Get('/tag/my')
-  public async showTag(@Request() req): Promise<any> {
     throw new NotImplementedException();
   }
 }
