@@ -23,6 +23,8 @@ import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
+import { AddTagToUserBodyDto } from '../types/AddTagToUserBodyDto';
+import { SigninBodyDto } from '../types/SigninBodyDto';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
@@ -35,7 +37,7 @@ export class UserController {
   constructor(private userService: UsersService) {}
 
   @ApiOperation({ description: 'Профиль со всеми тэгами' })
-  @ApiOkResponse(UserWithTagsDto)
+  // @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@User() user: any): Promise<any> {
     // todo сюда выводить все теги из UserTag
@@ -60,7 +62,9 @@ export class UserController {
 
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
   @Post('/tag')
-  public async createTag(@Request() req): Promise<any> {
+  public async createTag(@User() user: any, @Body() body: AddTagToUserBodyDto): Promise<any> {
+    console.log(body);
+    return this.userService.addTagToUser(user, body);
     throw new NotImplementedException();
   }
 

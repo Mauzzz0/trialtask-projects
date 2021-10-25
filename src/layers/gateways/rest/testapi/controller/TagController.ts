@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   NotImplementedException,
+  Param,
   Post,
   Put,
   Request,
@@ -36,20 +37,22 @@ export class TagController {
   }
 
   @ApiOperation({ description: 'Информация по тэгу' })
-  @Get('/:id')
-  public async index(@Request() req): Promise<any> {
+  @Get(':id')
+  public async index(@Param('id') id: number): Promise<any> {
+    return this.tagsService.showTag({ id });
     throw new NotImplementedException();
   }
 
   @ApiOperation({ description: 'Обновление тэга. Только создатель.' })
-  @Put('/:id')
+  @Put(':id')
   public async update(@Request() req): Promise<any> {
     throw new NotImplementedException();
   }
 
   @ApiOperation({ description: 'Удаление тэга. Только создатель.' })
-  @Delete('/:id')
-  public async destroy(@Request() req): Promise<any> {
+  @Delete(':id')
+  public async destroy(@User() user: any, @Param('id') id: number): Promise<any> {
+    return this.tagsService.delete(user, { id });
     throw new NotImplementedException();
   }
 }

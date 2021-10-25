@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import { hash } from 'bcryptjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectError';
@@ -7,36 +7,17 @@ import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
+import { UserTag } from 'src/layers/storage/postgres/entities/UserTag';
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(Tag) private tagsRepository: Repository<Tag>,
+    @InjectRepository(UserTag) private usertagRepository: Repository<UserTag>,
+  ) {}
 
   public async encryptPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 6);
-  }
-
-  async findOneComp(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
-    const r = await this.usersRepository.findOne(filter);
-    console.log('find pwd');
-    if (!r) {
-      throw new NotFoundException();
-    }
-
-    return r;
-  }
-
-  async findOneCompWithoutPwd(
-    filter: Record<string, any>,
-  ): Promise<Omit<User, 'uid' | 'password'>> {
-    const r = await this.usersRepository.findOne(filter);
-    console.log('find no pwd');
-    if (!r) {
-      throw new NotFoundException();
-    }
-
-    const { password, ...res } = r;
-
-    return res;
+    return await hash(password, 6);
   }
 
   async findOneFull(filter: Record<string, any>): Promise<any> {
@@ -52,7 +33,7 @@ export class UsersService {
       join: {
         alias: 'user',
         leftJoinAndSelect: {
-          tags: 'user.tags',
+          tagList: 'user.tagList',
         },
       },
     });
@@ -69,32 +50,52 @@ export class UsersService {
       join: {
         alias: 'user',
         leftJoinAndSelect: {
-          tags: 'user.tags',
+          tags: 'user.myTags',
         },
       },
     });
 
     console.log(rows);
 
-    return rows.tags;
+    return rows.myTags;
   }
 
-  async removeUserTag(filter: Record<string, any>): Promise<Tag[]> {
-    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
-    const { username, tagId } = filter;
-    const [rows] = await this.usersRepository.find({
-      where: filter,
-      join: {
-        alias: 'user',
-        leftJoinAndSelect: {
-          tags: 'user.tags',
-        },
-      },
+  async addTagToUser(user: any, body: any) {
+    // todo убрать any
+    // const rows = await this.usertagRepository.find({})
+    const { username } = user;
+    const userBd = await this.usersRepository.findOne({
+      where: { username },
     });
 
-    console.log(rows);
+    body.tags.map(async (tagId) => {
+      // todo сделать откат если айди не найден
+      const tagBd = await this.tagsRepository.findOne({ id: tagId });
 
-    return rows.tags;
+      const a1 = new UserTag();
+      a1.tag = tagBd;
+      a1.user = userBd;
+
+      await this.usertagRepository.save(a1);
+    });
+
+    return true;
+  }
+
+  async removeUserTag(filter: Record<string, any>): Promise<any> {
+    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
+    // const { username, tagId } = filter;
+    // const [rows] = await this.usersRepository.find({
+    //   where: filter,
+    //   join: {
+    //     alias: 'user',
+    //     leftJoinAndSelect: {
+    //       tags: 'user.tags',
+    //     },
+    //   },
+    // });
+    // console.log(rows);
+    // return rows.myTags;
   }
 
   async remove(filter: Record<string, any>): Promise<any> {
@@ -116,8 +117,8 @@ export class UsersService {
     return true;
   }
 
-  async createOne(user: Omit<User, 'uid' | 'tags'>) {
-    // todo
+  async createOne(user: Omit<User, 'uid' | 'tagList' | 'myTags'>) {
+    // todo привести к норм виду схему
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');
     const schema = new passwordValidator();

@@ -1,10 +1,17 @@
-// import { Entity, Column } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Tag } from './Tag';
+import { User } from './User';
+// todo накинуть unique или дабл PK, сейчас дубликаты
+@Entity()
+export class UserTag {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-// @Entity()
-// export class UserTag {
-//   @Column({ nullable: false, default: 'null' })
-//   userUid: string;
+  @ManyToOne(() => User, (user) => user.uid)
+  @JoinColumn({ name: 'user' })
+  user: User;
 
-//   @Column({ nullable: false, default: 'null' })
-//   tagId: number;
-// }
+  @ManyToOne(() => Tag, (tag) => tag.id)
+  @JoinColumn({ name: 'tag' })
+  tag: Tag;
+}

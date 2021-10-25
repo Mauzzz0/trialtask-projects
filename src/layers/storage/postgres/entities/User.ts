@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinColumn } from 'typeorm';
 import { Tag } from './Tag';
+import { UserTag } from './UserTag';
 
 @Entity()
 export class User {
@@ -16,5 +17,8 @@ export class User {
   password: string;
 
   @OneToMany(() => Tag, (tag) => tag.creator, { cascade: true })
-  tags: Tag[];
+  myTags: Tag[];
+
+  @OneToMany(() => UserTag, (usertag) => usertag.tag, { cascade: true })
+  tagList: UserTag[];
 }

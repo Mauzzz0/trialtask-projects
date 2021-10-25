@@ -6,7 +6,7 @@ export class SigninBodyDto {
   @IsString()
   public readonly username: string;
 
-  @ApiProperty({ description: 'password', example: 'password' })
+  @ApiProperty({ description: 'password', example: 'Password1' })
   @IsString()
   public readonly password: string;
 }
