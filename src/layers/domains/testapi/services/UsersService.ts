@@ -7,7 +7,7 @@ import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Connection, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
-import { FindUserOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
+import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
 
 @Injectable()
@@ -21,13 +21,13 @@ export class UsersService {
     return await hash(password, 6);
   }
 
-  async findOneByFilter(filter: Record<string, any>, options?: FindUserOpts): Promise<any> {
-    const r = await this.usersRepository.findOne({ where: filter, relations: options?.rel });
+  async findOneByFilter(filter: Record<string, any>, opts?: FindOpts): Promise<any> {
+    const r = await this.usersRepository.findOne({ where: filter, relations: opts?.rel });
 
     return r;
   }
 
-  async findOneById(id: string, opts?: FindUserOpts): Promise<any> {
+  async findOneById(id: string, opts?: FindOpts): Promise<any> {
     const r = await this.usersRepository.findOne({
       where: { uid: id },
       relations: opts?.rel,
@@ -36,19 +36,19 @@ export class UsersService {
     return r;
   }
 
-  async findOneByEmail(email: string, options?: FindUserOpts): Promise<any> {
+  async findOneByEmail(email: string, opts?: FindOpts): Promise<any> {
     const r = await this.usersRepository.findOne({
       where: { email },
-      relations: options?.rel,
+      relations: opts?.rel,
     });
 
     return r;
   }
 
-  async findOneByUsername(username: string, options?: FindUserOpts): Promise<any> {
+  async findOneByUsername(username: string, opts?: FindOpts): Promise<any> {
     const r = await this.usersRepository.findOne({
       where: { username },
-      relations: options?.rel,
+      relations: opts?.rel,
     });
 
     return r;

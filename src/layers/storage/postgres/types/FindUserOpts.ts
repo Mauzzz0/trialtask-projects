@@ -1,5 +1,6 @@
+import { TagRelations } from './TagRelEnum';
 import { UserRelations } from './UserRelEnum';
 
-export interface FindUserOpts {
-  rel: Array<UserRelations>;
+export interface FindOpts {
+  rel: Array<UserRelations | TagRelations>;
 }
