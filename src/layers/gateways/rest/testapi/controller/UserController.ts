@@ -41,9 +41,8 @@ export class UserController {
   @Get('')
   public async show(@User() user: any): Promise<any> {
     // todo сюда выводить все теги из UserTag
-    console.log('zz', user);
+    console.log('show:', user);
     return this.userService.profile({ username: user.username });
-    // return this.userService.findOneFull({ username: req.user.username });
   }
 
   @ApiOperation({ description: 'Обновление профиля' })
@@ -64,7 +63,7 @@ export class UserController {
   @Post('/tag')
   public async createTag(@User() user: any, @Body() body: AddTagToUserBodyDto): Promise<any> {
     console.log(body);
-    return this.userService.addTagToUser(user, body);
+    return this.userService.addTasgToUser(user, body.tags);
     throw new NotImplementedException();
   }
 
@@ -79,7 +78,7 @@ export class UserController {
   @ApiOperation({ description: 'Тэги, которые я создал' })
   @ApiOkResponse(TagsDto)
   @Get('/tag/my')
-  public async showTag(@Request() req): Promise<any> {
-    return await this.userService.tagsForUser({ username: req.user.username });
+  public async showTag(@User() user: any): Promise<any> {
+    return await this.userService.tagsForUser({ username: user.username });
   }
 }

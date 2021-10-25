@@ -5,24 +5,53 @@ import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectE
 import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
 import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
-import { UserTag } from 'src/layers/storage/postgres/entities/UserTag';
+// import { UserTag } from 'src/layers/storage/postgres/entities/UserTag';
+import { FindUserOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
+import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
 @Injectable()
 export class UsersService {
   constructor(
+    private connection: Connection,
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(Tag) private tagsRepository: Repository<Tag>,
-    @InjectRepository(UserTag) private usertagRepository: Repository<UserTag>,
+    @InjectRepository(Tag) private tagsRepository: Repository<Tag>, // @InjectRepository(UserTag) private usertagRepository: Repository<UserTag>,
   ) {}
 
   public async encryptPassword(password: string): Promise<string> {
     return await hash(password, 6);
   }
 
-  async findOneFull(filter: Record<string, any>): Promise<any> {
-    const r = await this.usersRepository.findOne(filter);
-    console.log('full', r);
+  async findOneByFilter(filter: Record<string, any>, options?: FindUserOpts): Promise<any> {
+    const r = await this.usersRepository.findOne({ where: filter, relations: options?.rel });
+
+    return r;
+  }
+
+  async findOneById(id: number, opts?: FindUserOpts): Promise<any> {
+    const r = await this.usersRepository.findOne({
+      where: { uid: id },
+      relations: opts?.rel,
+    });
+
+    return r;
+  }
+
+  async findOneByEmail(email: string, options?: FindUserOpts): Promise<any> {
+    const r = await this.usersRepository.findOne({
+      where: { email },
+      relations: options?.rel,
+    });
+
+    return r;
+  }
+
+  async findOneByUsername(username: string, options?: FindUserOpts): Promise<any> {
+    const r = await this.usersRepository.findOne({
+      where: { username },
+      relations: options?.rel,
+    });
+
     return r;
   }
 
@@ -50,36 +79,56 @@ export class UsersService {
       join: {
         alias: 'user',
         leftJoinAndSelect: {
-          tags: 'user.myTags',
+          tags: 'user.ownTags',
         },
       },
     });
 
-    console.log(rows);
-
-    return rows.myTags;
+    return rows.ownTags;
   }
 
-  async addTagToUser(user: any, body: any) {
+  async addTasgToUser(user: any, ids: number[]) {
     // todo убрать any
     // const rows = await this.usertagRepository.find({})
-    const { username } = user;
-    const userBd = await this.usersRepository.findOne({
-      where: { username },
-    });
+    // const { username } = user;
+    // const userBd = await this.usersRepository.findOne({
+    //   where: { username },
+    // });
+    // body.tags.map(async (tagId) => {
+    //   // todo сделать откат если айди не найден
+    //   const tagBd = await this.tagsRepository.findOne({ id: tagId });
+    //   const a1 = new UserTag();
+    //   a1.tag = tagBd;
+    //   a1.user = userBd;
+    //   await this.usertagRepository.save(a1);
+    // });
+    // return true;
+    const { uid } = await this.findOneByUsername(user.username);
 
-    body.tags.map(async (tagId) => {
-      // todo сделать откат если айди не найден
-      const tagBd = await this.tagsRepository.findOne({ id: tagId });
+    const qr = this.connection.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
 
-      const a1 = new UserTag();
-      a1.tag = tagBd;
-      a1.user = userBd;
+    try {
+      // @todo UnhandledPromiseRejectionWarning
+      const tagList = await Promise.all(
+        ids.map(async (id) => {
+          const r = await qr.manager.findOne(Tag, id);
+          if (!r) throw new NotFoundException(); // todo свой эррор
+          return r;
+        }),
+      );
+      await qr.manager.createQueryBuilder().relation(User, 'tagList').of(uid).add(tagList);
+      await qr.commitTransaction();
+    } catch (e: any) {
+      await qr.rollbackTransaction();
+    } finally {
+      await qr.release();
+    }
 
-      await this.usertagRepository.save(a1);
-    });
+    const r = await this.findOneById(uid, { rel: [UserRelations.tagList] });
 
-    return true;
+    return r;
   }
 
   async removeUserTag(filter: Record<string, any>): Promise<any> {
@@ -117,7 +166,7 @@ export class UsersService {
     return true;
   }
 
-  async createOne(user: Omit<User, 'uid' | 'tagList' | 'myTags'>) {
+  async createOne(user: Omit<User, 'uid' | 'tagList' | 'ownTags'>) {
     // todo привести к норм виду схему
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');

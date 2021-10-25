@@ -1,30 +1,17 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  ManyToMany,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 import { User } from './User';
-import { UserTag } from './UserTag';
 
 @Entity()
 export class Tag {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.myTags)
-  @JoinColumn({ name: 'creator' })
+  @ManyToOne(() => User, (user) => user.ownTags)
   creator: User;
 
-  @Column({ nullable: false, default: 'null' })
+  @Column({ type: 'varchar', length: 40, default: 'null', unique: true })
   name: string;
 
-  @Column({ nullable: false, default: 0 })
+  @Column({ type: 'int', nullable: false, default: 0 })
   sortOrder: number;
-
-  @OneToMany(() => UserTag, (usertag) => usertag.tag, { cascade: true })
-  users: UserTag[];
 }

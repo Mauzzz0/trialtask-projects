@@ -1,24 +1,24 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Tag } from './Tag';
-import { UserTag } from './UserTag';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   uid: string;
 
-  @Column({ nullable: false, default: 'null' })
+  @Column({ type: 'varchar', length: 100, nullable: false, default: 'null', unique: true })
   email: string;
 
-  @Column({ nullable: false, default: 'null', unique: true })
+  @Column({ type: 'varchar', length: 30, nullable: false, default: 'null', unique: true })
   username: string;
 
-  @Column({ nullable: false, default: 'null' })
+  @Column({ type: 'varchar', length: 100, nullable: false, default: 'null' })
   password: string;
 
   @OneToMany(() => Tag, (tag) => tag.creator, { cascade: true })
-  myTags: Tag[];
+  ownTags: Tag[];
 
-  @OneToMany(() => UserTag, (usertag) => usertag.tag, { cascade: true })
-  tagList: UserTag[];
+  @ManyToMany(() => Tag, { cascade: true })
+  @JoinTable()
+  tagList: Tag[];
 }

@@ -13,7 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "start:services": "npm run stop:Services && cd integration && docker-compose up --build -d",
+    "start:services": "npm run stop:services && cd integration && docker-compose up --build -d",
     "stop:services": "cd integration && docker-compose down",
     "lint:scan": "eslint 'src/**'",
     "test": "jest",
