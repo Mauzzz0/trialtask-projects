@@ -33,14 +33,15 @@ export class UserController {
   @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@Request() req): Promise<any> {
-    return this.userService.testFind({ username: req.user.username });
+    console.log('zz', req.user);
+    return this.userService.profile({ username: req.user.username });
     // return this.userService.findOneFull({ username: req.user.username });
   }
 
   @ApiOkResponse(UserWithUidAndPasswordDto)
   @Put('')
   public async update(@Request() req): Promise<any> {
-    throw new NotImplementedException();
+    // return this.userService.update({});
   }
 
   @Delete('')

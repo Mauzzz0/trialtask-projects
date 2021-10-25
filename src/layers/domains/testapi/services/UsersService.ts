@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectError';
@@ -8,6 +9,10 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
+
+  public async encryptPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 6);
+  }
 
   async findOneComp(filter: Record<string, any>): Promise<Omit<User, 'uid'>> {
     const r = await this.usersRepository.findOne(filter);
@@ -36,12 +41,13 @@ export class UsersService {
   async findOneFull(filter: Record<string, any>): Promise<any> {
     const r = await this.usersRepository.findOne(filter);
     console.log(r);
-    return null;
+    return r;
   }
 
-  async testFind(where: { username: string }): Promise<any> {
+  async profile(filter: Record<string, any>): Promise<User> {
+    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
     const [rows] = await this.usersRepository.find({
-      where,
+      where: filter,
       join: {
         alias: 'user',
         leftJoinAndSelect: {
