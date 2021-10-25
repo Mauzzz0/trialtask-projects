@@ -14,7 +14,7 @@ export class TagsService {
     // todo тут фиксануть ненорм
     tag['creator'] = creator.uid;
     await this.tagsRepository.save(tag);
-    console.log('Добавлен тэг: ', tag);
+
     return true;
   }
 

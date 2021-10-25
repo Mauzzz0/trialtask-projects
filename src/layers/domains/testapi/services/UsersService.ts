@@ -7,15 +7,14 @@ import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Connection, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
-// import { UserTag } from 'src/layers/storage/postgres/entities/UserTag';
 import { FindUserOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
+
 @Injectable()
 export class UsersService {
   constructor(
     private connection: Connection,
     @InjectRepository(User) private usersRepository: Repository<User>,
-    @InjectRepository(Tag) private tagsRepository: Repository<Tag>, // @InjectRepository(UserTag) private usertagRepository: Repository<UserTag>,
   ) {}
 
   public async encryptPassword(password: string): Promise<string> {
@@ -28,7 +27,7 @@ export class UsersService {
     return r;
   }
 
-  async findOneById(id: number, opts?: FindUserOpts): Promise<any> {
+  async findOneById(id: string, opts?: FindUserOpts): Promise<any> {
     const r = await this.usersRepository.findOne({
       where: { uid: id },
       relations: opts?.rel,
@@ -55,62 +54,17 @@ export class UsersService {
     return r;
   }
 
-  async profile(filter: Record<string, any>): Promise<User> {
-    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
-    const [rows] = await this.usersRepository.find({
-      where: filter,
-      join: {
-        alias: 'user',
-        leftJoinAndSelect: {
-          tagList: 'user.tagList',
-        },
-      },
-    });
-
-    console.log(rows);
-
-    return rows;
-  }
-
-  async tagsForUser(filter: Record<string, any>): Promise<Tag[]> {
-    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
-    const [rows] = await this.usersRepository.find({
-      where: filter,
-      join: {
-        alias: 'user',
-        leftJoinAndSelect: {
-          tags: 'user.ownTags',
-        },
-      },
-    });
-
-    return rows.ownTags;
-  }
-
   async addTasgToUser(user: any, ids: number[]) {
-    // todo убрать any
-    // const rows = await this.usertagRepository.find({})
-    // const { username } = user;
-    // const userBd = await this.usersRepository.findOne({
-    //   where: { username },
-    // });
-    // body.tags.map(async (tagId) => {
-    //   // todo сделать откат если айди не найден
-    //   const tagBd = await this.tagsRepository.findOne({ id: tagId });
-    //   const a1 = new UserTag();
-    //   a1.tag = tagBd;
-    //   a1.user = userBd;
-    //   await this.usertagRepository.save(a1);
-    // });
-    // return true;
     const { uid } = await this.findOneByUsername(user.username);
 
     const qr = this.connection.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
 
+    // try-catch используется для ролбэка транзакции. В остальных случаях ошибку перехватит HttpExceptionFilter
+    let err: Error;
     try {
-      // @todo UnhandledPromiseRejectionWarning
+      // @todo разрешить UnhandledPromiseRejectionWarning
       const tagList = await Promise.all(
         ids.map(async (id) => {
           const r = await qr.manager.findOne(Tag, id);
@@ -122,51 +76,31 @@ export class UsersService {
       await qr.commitTransaction();
     } catch (e: any) {
       await qr.rollbackTransaction();
+      err = e;
     } finally {
       await qr.release();
     }
+
+    if (err) throw err;
 
     const r = await this.findOneById(uid, { rel: [UserRelations.tagList] });
 
     return r;
   }
 
-  async removeUserTag(filter: Record<string, any>): Promise<any> {
-    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
-    // const { username, tagId } = filter;
-    // const [rows] = await this.usersRepository.find({
-    //   where: filter,
-    //   join: {
-    //     alias: 'user',
-    //     leftJoinAndSelect: {
-    //       tags: 'user.tags',
-    //     },
-    //   },
-    // });
-    // console.log(rows);
-    // return rows.myTags;
-  }
+  async removeTasgFromUser(user: any, id: number): Promise<any> {
+    const { uid } = await this.findOneByUsername(user.username);
 
-  async remove(filter: Record<string, any>): Promise<any> {
-    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
-    const [user] = await this.usersRepository.find({
-      where: filter,
-      join: {
-        alias: 'user',
-        leftJoinAndSelect: {
-          tags: 'user.tags',
-        },
-      },
+    await this.connection.createQueryBuilder().relation(User, 'tagList').of(uid).remove(id);
+
+    const userDb = await this.findOneById(uid, {
+      rel: [UserRelations.tagList],
     });
 
-    this.usersRepository.remove(user);
-
-    // console.log(rows);
-
-    return true;
+    return userDb.tagList;
   }
 
-  async createOne(user: Omit<User, 'uid' | 'tagList' | 'ownTags'>) {
+  async createProfile(user: Partial<User>) {
     // todo привести к норм виду схему
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');
@@ -182,7 +116,32 @@ export class UsersService {
     }
 
     await this.usersRepository.save(user);
-    console.log('Добавлен пользователь: ', user);
+
+    return true;
+  }
+
+  async updateProfile(user: any, body: Partial<User>): Promise<any> {
+    const { uid } = await this.findOneByUsername(user.username);
+
+    await this.connection
+      .createQueryBuilder()
+      .update(User)
+      .set(body)
+      .where('uid = :uid', { uid })
+      .execute();
+
+    const r = this.findOneById(uid);
+
+    return r;
+  }
+
+  async removeProfile(user: any): Promise<any> {
+    const { uid } = await this.findOneByUsername(user.username);
+
+    const userDb = await this.findOneById(uid);
+
+    this.usersRepository.remove(userDb);
+
     return true;
   }
 }

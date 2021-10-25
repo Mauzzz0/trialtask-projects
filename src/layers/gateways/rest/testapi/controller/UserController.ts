@@ -3,17 +3,14 @@ import {
   Controller,
   Delete,
   Get,
-  NotImplementedException,
   Param,
   Post,
   Put,
-  Request,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { BaseTagDto } from 'src/common/layers/contracts/dto/testapi/BaseTagDto';
 import { TagsDto } from 'src/common/layers/contracts/dto/testapi/TagsDto';
 import { UserWithTagsDto } from 'src/common/layers/contracts/dto/testapi/UserWithTagsDto';
 import { UserWithUidAndPasswordDto } from 'src/common/layers/contracts/dto/testapi/UserWithUidAndPasswordDto';
@@ -23,8 +20,9 @@ import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
+import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
 import { AddTagToUserBodyDto } from '../types/AddTagToUserBodyDto';
-import { SigninBodyDto } from '../types/SigninBodyDto';
+import { UpdateProfileBodyDto } from '../types/UpdateProfileBodyDto';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
@@ -40,45 +38,44 @@ export class UserController {
   // @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@User() user: any): Promise<any> {
-    // todo сюда выводить все теги из UserTag
-    console.log('show:', user);
-    return this.userService.profile({ username: user.username });
+    return this.userService.findOneByFilter(
+      { username: user.username },
+      { rel: [UserRelations.tagList] },
+    );
   }
 
   @ApiOperation({ description: 'Обновление профиля' })
   @ApiOkResponse(UserWithUidAndPasswordDto)
   @Put('')
-  public async update(@Request() req): Promise<any> {
-    // return this.userService.update({});
+  public async update(@User() user: any, @Body() body: UpdateProfileBodyDto): Promise<any> {
+    return this.userService.updateProfile(user, body);
   }
 
   @ApiOperation({ description: 'Удаление профиля' })
   @Delete('')
   public async destroy(@User() user: any): Promise<any> {
-    // /logout
-    return this.userService.remove({ username: user.username });
+    return this.userService.removeProfile(user);
   }
 
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
   @Post('/tag')
   public async createTag(@User() user: any, @Body() body: AddTagToUserBodyDto): Promise<any> {
-    console.log(body);
     return this.userService.addTasgToUser(user, body.tags);
-    throw new NotImplementedException();
   }
 
   @ApiOperation({ description: 'Удаление тэга из своего тэг-листа' })
   @Delete('/tag/:id')
   public async destroyTag(@User() user: any, @Param('id') id: number): Promise<any> {
-    // console.log(user, id);
-    return await this.userService.removeUserTag({ username: user.username, tagId: id });
-    // throw new NotImplementedException();
+    return await this.userService.removeTasgFromUser(user, id);
   }
 
   @ApiOperation({ description: 'Тэги, которые я создал' })
   @ApiOkResponse(TagsDto)
   @Get('/tag/my')
-  public async showTag(@User() user: any): Promise<any> {
-    return await this.userService.tagsForUser({ username: user.username });
+  public async showTags(@User() user: any): Promise<any> {
+    return await this.userService.findOneByFilter(
+      { username: user.username },
+      { rel: [UserRelations.ownTags] },
+    );
   }
 }

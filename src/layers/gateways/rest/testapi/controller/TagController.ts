@@ -40,7 +40,6 @@ export class TagController {
   @Get(':id')
   public async index(@Param('id') id: number): Promise<any> {
     return this.tagsService.showTag({ id });
-    throw new NotImplementedException();
   }
 
   @ApiOperation({ description: 'Обновление тэга. Только создатель.' })
@@ -53,6 +52,5 @@ export class TagController {
   @Delete(':id')
   public async destroy(@User() user: any, @Param('id') id: number): Promise<any> {
     return this.tagsService.delete(user, { id });
-    throw new NotImplementedException();
   }
 }

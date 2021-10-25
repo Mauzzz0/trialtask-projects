@@ -4,7 +4,6 @@ import {
   Post,
   Put,
   UseGuards,
-  Request,
   Body,
   UseInterceptors,
   UseFilters,
@@ -28,21 +27,18 @@ export class AuthController {
   @ApiOperation({ description: 'Регистрация' })
   @Post('/signup')
   public async register(@Body() body: SignupBodyDto): Promise<any> {
-    const result = await this.userService.createOne(body);
+    const result = await this.userService.createProfile(body);
     return { result };
   }
 
   @ApiOperation({ description: 'Вход' })
   @UseGuards(LocalAuthGuard)
-  @ApiOperation({ description: 'Sign in' })
   @Post('/signin')
   public async login(@Body() body: SigninBodyDto) {
-    console.log(body);
     return this.authService.login(body);
   }
 
   @ApiOperation({ description: 'Выход' })
-  @ApiOperation({ description: 'Sign out' })
   @Put('/logout')
   public async logout() {
     throw new NotImplementedException();
