@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   NotImplementedException,
+  Param,
   Post,
   Put,
   Request,
@@ -16,6 +17,7 @@ import { BaseTagDto } from 'src/common/layers/contracts/dto/testapi/BaseTagDto';
 import { TagsDto } from 'src/common/layers/contracts/dto/testapi/TagsDto';
 import { UserWithTagsDto } from 'src/common/layers/contracts/dto/testapi/UserWithTagsDto';
 import { UserWithUidAndPasswordDto } from 'src/common/layers/contracts/dto/testapi/UserWithUidAndPasswordDto';
+import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
@@ -34,9 +36,9 @@ export class UserController {
 
   @ApiOkResponse(UserWithTagsDto)
   @Get('')
-  public async show(@Request() req): Promise<any> {
-    console.log('zz', req.user);
-    return this.userService.profile({ username: req.user.username });
+  public async show(@User() user: any): Promise<any> {
+    console.log('zz', user);
+    return this.userService.profile({ username: user.username });
     // return this.userService.findOneFull({ username: req.user.username });
   }
 
@@ -47,10 +49,9 @@ export class UserController {
   }
 
   @Delete('')
-  public async destroy(@Request() req): Promise<any> {
+  public async destroy(@User() user: any): Promise<any> {
     // /logout
-    return this.userService.remove({ username: req.user.username });
-    throw new NotImplementedException();
+    return this.userService.remove({ username: user.username });
   }
 
   @Post('/tag')
@@ -59,8 +60,10 @@ export class UserController {
   }
 
   @Delete('/tag/:id')
-  public async destroyTag(@Request() req): Promise<any> {
-    throw new NotImplementedException();
+  public async destroyTag(@User() user: any, @Param('id') id: number): Promise<any> {
+    // console.log(user, id);
+    return await this.userService.removeUserTag({ username: user.username, tagId: id });
+    // throw new NotImplementedException();
   }
 
   @ApiOkResponse(TagsDto)

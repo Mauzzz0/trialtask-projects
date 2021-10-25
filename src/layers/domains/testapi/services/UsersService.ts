@@ -79,6 +79,24 @@ export class UsersService {
     return rows.tags;
   }
 
+  async removeUserTag(filter: Record<string, any>): Promise<Tag[]> {
+    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
+    const { username, tagId } = filter;
+    const [rows] = await this.usersRepository.find({
+      where: filter,
+      join: {
+        alias: 'user',
+        leftJoinAndSelect: {
+          tags: 'user.tags',
+        },
+      },
+    });
+
+    console.log(rows);
+
+    return rows.tags;
+  }
+
   async remove(filter: Record<string, any>): Promise<any> {
     // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
     const [user] = await this.usersRepository.find({
