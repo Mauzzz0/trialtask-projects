@@ -12,6 +12,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { BaseTagDto } from 'src/common/layers/contracts/dto/testapi/BaseTagDto';
+import { TagsDto } from 'src/common/layers/contracts/dto/testapi/TagsDto';
 import { UserWithTagsDto } from 'src/common/layers/contracts/dto/testapi/UserWithTagsDto';
 import { UserWithUidAndPasswordDto } from 'src/common/layers/contracts/dto/testapi/UserWithUidAndPasswordDto';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
@@ -23,7 +25,7 @@ import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels(UserWithUidAndPasswordDto, UserWithTagsDto)
+@ApiExtraModels(UserWithUidAndPasswordDto, UserWithTagsDto, TagsDto)
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('user')
@@ -59,8 +61,9 @@ export class UserController {
     throw new NotImplementedException();
   }
 
+  @ApiOkResponse(TagsDto)
   @Get('/tag/my')
   public async showTag(@Request() req): Promise<any> {
-    throw new NotImplementedException();
+    return await this.userService.tagsForUser({ username: req.user.username });
   }
 }

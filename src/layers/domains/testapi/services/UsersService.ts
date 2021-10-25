@@ -6,6 +6,7 @@ import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakE
 import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Repository } from 'typeorm';
+import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
@@ -59,6 +60,23 @@ export class UsersService {
     console.log(rows);
 
     return rows;
+  }
+
+  async tagsForUser(filter: Record<string, any>): Promise<Tag[]> {
+    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
+    const [rows] = await this.usersRepository.find({
+      where: filter,
+      join: {
+        alias: 'user',
+        leftJoinAndSelect: {
+          tags: 'user.tags',
+        },
+      },
+    });
+
+    console.log(rows);
+
+    return rows.tags;
   }
 
   async createOne(user: Omit<User, 'uid' | 'tags'>) {
