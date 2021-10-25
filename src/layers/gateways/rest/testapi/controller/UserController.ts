@@ -48,6 +48,8 @@ export class UserController {
 
   @Delete('')
   public async destroy(@Request() req): Promise<any> {
+    // /logout
+    return this.userService.remove({ username: req.user.username });
     throw new NotImplementedException();
   }
 

@@ -79,6 +79,25 @@ export class UsersService {
     return rows.tags;
   }
 
+  async remove(filter: Record<string, any>): Promise<any> {
+    // Вообще по-хорошему инжектить сюда dbService и уже вызывать его методы поиска
+    const [user] = await this.usersRepository.find({
+      where: filter,
+      join: {
+        alias: 'user',
+        leftJoinAndSelect: {
+          tags: 'user.tags',
+        },
+      },
+    });
+
+    this.usersRepository.remove(user);
+
+    // console.log(rows);
+
+    return true;
+  }
+
   async createOne(user: Omit<User, 'uid' | 'tags'>) {
     // todo
     // eslint-disable-next-line @typescript-eslint/no-var-requires
