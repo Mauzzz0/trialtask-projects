@@ -25,12 +25,14 @@ import { SignupBodyDto } from '../types/SignupBodyDto';
 export class AuthController {
   constructor(private authService: AuthService, private userService: UsersService) {}
 
+  @ApiOperation({ description: 'Регистрация' })
   @Post('/signup')
   public async register(@Body() body: SignupBodyDto): Promise<any> {
     const result = await this.userService.createOne(body);
     return { result };
   }
 
+  @ApiOperation({ description: 'Вход' })
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ description: 'Sign in' })
   @Post('/signin')
@@ -39,6 +41,7 @@ export class AuthController {
     return this.authService.login(body);
   }
 
+  @ApiOperation({ description: 'Выход' })
   @ApiOperation({ description: 'Sign out' })
   @Put('/logout')
   public async logout() {

@@ -3,8 +3,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 export const SetupSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
-    .setTitle('FARM')
-    .setDescription('Farm service API')
+    .setTitle('Outside Digital')
+    .setDescription('API тестового задания Outside Digital')
     .setVersion('0.1')
     .addBearerAuth()
     .build();

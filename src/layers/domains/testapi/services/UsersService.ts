@@ -41,7 +41,7 @@ export class UsersService {
 
   async findOneFull(filter: Record<string, any>): Promise<any> {
     const r = await this.usersRepository.findOne(filter);
-    console.log(r);
+    console.log('full', r);
     return r;
   }
 

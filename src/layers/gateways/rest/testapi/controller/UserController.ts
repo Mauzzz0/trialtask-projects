@@ -12,7 +12,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { BaseTagDto } from 'src/common/layers/contracts/dto/testapi/BaseTagDto';
 import { TagsDto } from 'src/common/layers/contracts/dto/testapi/TagsDto';
 import { UserWithTagsDto } from 'src/common/layers/contracts/dto/testapi/UserWithTagsDto';
@@ -34,31 +34,37 @@ import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 export class UserController {
   constructor(private userService: UsersService) {}
 
+  @ApiOperation({ description: 'Профиль со всеми тэгами' })
   @ApiOkResponse(UserWithTagsDto)
   @Get('')
   public async show(@User() user: any): Promise<any> {
+    // todo сюда выводить все теги из UserTag
     console.log('zz', user);
     return this.userService.profile({ username: user.username });
     // return this.userService.findOneFull({ username: req.user.username });
   }
 
+  @ApiOperation({ description: 'Обновление профиля' })
   @ApiOkResponse(UserWithUidAndPasswordDto)
   @Put('')
   public async update(@Request() req): Promise<any> {
     // return this.userService.update({});
   }
 
+  @ApiOperation({ description: 'Удаление профиля' })
   @Delete('')
   public async destroy(@User() user: any): Promise<any> {
     // /logout
     return this.userService.remove({ username: user.username });
   }
 
+  @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
   @Post('/tag')
   public async createTag(@Request() req): Promise<any> {
     throw new NotImplementedException();
   }
 
+  @ApiOperation({ description: 'Удаление тэга из своего тэг-листа' })
   @Delete('/tag/:id')
   public async destroyTag(@User() user: any, @Param('id') id: number): Promise<any> {
     // console.log(user, id);
@@ -66,6 +72,7 @@ export class UserController {
     // throw new NotImplementedException();
   }
 
+  @ApiOperation({ description: 'Тэги, которые я создал' })
   @ApiOkResponse(TagsDto)
   @Get('/tag/my')
   public async showTag(@Request() req): Promise<any> {
