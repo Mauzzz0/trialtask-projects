@@ -7,7 +7,7 @@ export class Tag {
   id: number;
 
   @ManyToOne(() => User, (user) => user.tags)
-  @JoinColumn({ name: 'user_uid' })
+  @JoinColumn({ name: 'creator' })
   creator: User;
 
   @Column({ nullable: false, default: 'null' })

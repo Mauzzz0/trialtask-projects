@@ -12,23 +12,26 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiTags } from '@nestjs/swagger';
+import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
+import { TagsService } from 'src/layers/domains/testapi/services/TagsService';
+import { CreateTagBodyDto } from '../types/CreateTagBodyDto';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels()
+@ApiExtraModels(CreateTagBodyDto)
 @ApiBearerAuth()
 @ApiTags('Tag')
 @Controller('tag')
 export class TagController {
-  // constructor(private userService: UsersService) {}
+  constructor(private tagsService: TagsService) {}
 
   @Post('')
-  public async create(@Request() req): Promise<any> {
-    throw new NotImplementedException();
+  public async create(@User() user: any, @Body() body: CreateTagBodyDto): Promise<any> {
+    return this.tagsService.createOne(user, body);
   }
 
   @Get('/:id')
