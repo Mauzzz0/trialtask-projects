@@ -5,6 +5,8 @@ import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { UsersService } from './UsersService';
 import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { TagRelations } from 'src/layers/storage/postgres/types/TagRelEnum';
+import { ResultResponse } from 'src/layers/gateways/rest/testapi/types/ResultResponse';
+import { User } from 'src/layers/storage/postgres/entities/User';
 
 @Injectable()
 export class TagsService {
@@ -14,13 +16,13 @@ export class TagsService {
     private connection: Connection,
   ) {}
 
-  async findOneByFilter(filter: Record<string, any>, opts?: FindOpts): Promise<any> {
+  async findOneByFilter(filter: Record<string, any>, opts?: FindOpts): Promise<Tag> {
     const r = await this.tagsRepository.findOne({ where: filter, relations: opts?.rel });
 
     return r;
   }
 
-  async findOneById(id: number, opts?: FindOpts): Promise<any> {
+  async findOneById(id: number, opts?: FindOpts): Promise<Tag> {
     const r = await this.tagsRepository.findOne({
       where: { id: id },
       relations: opts?.rel,
@@ -62,16 +64,16 @@ export class TagsService {
     return r;
   }
 
-  async createOne(user: any, tag: Partial<Tag>) {
-    const creator = await this.usersService.findOneByUsername(user.username);
-    tag.creator = creator.uid;
+  async createOne(user: any, tag: Partial<Tag>): Promise<ResultResponse> {
+    const creator = (await this.usersService.findOneByUsername(user.username)) as User;
+    tag.creator = creator;
 
     await this.tagsRepository.save(tag);
 
     return { result: true };
   }
 
-  async showTag(id: number) {
+  async showTag(id: number): Promise<Tag> {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
@@ -82,7 +84,7 @@ export class TagsService {
     return tag;
   }
 
-  async update(user: any, id: number, body: Partial<Tag>) {
+  async update(user: any, id: number, body: Partial<Tag>): Promise<Tag> {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
@@ -100,7 +102,7 @@ export class TagsService {
     return r;
   }
 
-  async delete(user: any, id: number) {
+  async delete(user: any, id: number): Promise<ResultResponse> {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();

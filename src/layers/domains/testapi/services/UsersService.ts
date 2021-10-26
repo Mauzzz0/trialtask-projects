@@ -7,6 +7,8 @@ import { Connection, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
+import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
+import { TagDto } from 'src/common/layers/contracts/dto/testapi/TagDto';
 
 @Injectable()
 export class UsersService {
@@ -34,7 +36,7 @@ export class UsersService {
     return user;
   }
 
-  async findOneById(id: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+  async findOneById(id: string, opts?: FindOpts, pwd?: boolean): Promise<Partial<User>> {
     const user = await this.usersRepository.findOne({
       where: { uid: id },
       relations: opts?.rel,
@@ -48,7 +50,7 @@ export class UsersService {
     return user;
   }
 
-  async findOneByEmail(email: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+  async findOneByEmail(email: string, opts?: FindOpts, pwd?: boolean): Promise<Partial<User>> {
     const user = await this.usersRepository.findOne({
       where: { email },
       relations: opts?.rel,
@@ -62,7 +64,11 @@ export class UsersService {
     return user;
   }
 
-  async findOneByUsername(username: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+  async findOneByUsername(
+    username: string,
+    opts?: FindOpts,
+    pwd?: boolean,
+  ): Promise<Partial<User>> {
     const user = await this.usersRepository.findOne({
       where: { username },
       relations: opts?.rel,
@@ -76,7 +82,7 @@ export class UsersService {
     return user;
   }
 
-  async addTasgToUser(user: any, ids: number[]) {
+  async addTasgToUser(user: any, ids: number[]): Promise<Partial<User>> {
     const { uid } = await this.findOneByUsername(user.username);
 
     const qr = this.connection.createQueryRunner();
@@ -110,7 +116,7 @@ export class UsersService {
     return r;
   }
 
-  async removeTasgFromUser(user: any, id: number): Promise<any> {
+  async removeTasgFromUser(user: any, id: number): Promise<{ tags: Partial<TagDto>[] }> {
     const { uid } = await this.findOneByUsername(user.username);
 
     await this.connection.createQueryBuilder().relation(User, 'tagList').of(uid).remove(id);
@@ -122,7 +128,7 @@ export class UsersService {
     return { tags: userDb.tagList };
   }
 
-  async createProfile(user: Partial<User>) {
+  async createProfile(user: Partial<User>): Promise<ResultPayload> {
     // Не разобрался как норм импортнуть, чтобы не получить password_validator_1.default is not a constructor
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');
@@ -136,10 +142,10 @@ export class UsersService {
 
     await this.usersRepository.save(user);
 
-    return true;
+    return { result: true };
   }
 
-  async updateProfile(user: any, body: Partial<User>): Promise<any> {
+  async updateProfile(user: any, body: Partial<User>): Promise<Partial<User>> {
     const { uid } = await this.findOneByUsername(user.username);
 
     await this.connection
@@ -157,7 +163,7 @@ export class UsersService {
   async removeProfile(user: any): Promise<any> {
     const { uid } = await this.findOneByUsername(user.username);
 
-    const userDb = await this.findOneById(uid);
+    const userDb = (await this.findOneById(uid)) as User;
 
     await this.usersRepository.remove(userDb);
 

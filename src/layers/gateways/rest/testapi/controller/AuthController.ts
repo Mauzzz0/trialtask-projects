@@ -31,9 +31,9 @@ export class AuthController {
   @ApiOperation({ description: 'Регистрация' })
   @ApiOkResponse(ResultPayload)
   @Post('/signup')
-  public async register(@Body() body: SignupBodyDto): Promise<any> {
+  public async register(@Body() body: SignupBodyDto): Promise<ResultPayload> {
     const result = await this.userService.createProfile(body);
-    return { result };
+    return result;
   }
 
   @ApiOperation({ description: 'Вход' })
