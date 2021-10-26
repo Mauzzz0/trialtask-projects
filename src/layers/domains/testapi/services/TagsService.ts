@@ -62,7 +62,7 @@ export class TagsService {
     return r;
   }
 
-  async createOne(user: any, tag: Omit<Tag, 'id' | 'creator' | 'users'>) {
+  async createOne(user: any, tag: Partial<Tag>) {
     const creator = await this.usersService.findOneByUsername(user.username);
     // todo тут фиксануть ненорм
     tag['creator'] = creator.uid;
@@ -75,7 +75,7 @@ export class TagsService {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
-    // todo отсюда убрать creator.password
+
     return tag;
   }
 
