@@ -1,9 +1,7 @@
 import { hash } from 'bcryptjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EmailIncorrectError } from 'src/common/rules/exceptions/EmailIncorrectError';
 import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
-import { EmailRegex } from 'src/layers/gateways/rest/testapi/utils/utils';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Connection, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
@@ -121,11 +119,11 @@ export class UsersService {
       rel: [UserRelations.tagList],
     });
 
-    return userDb.tagList;
+    return { tags: userDb.tagList };
   }
 
   async createProfile(user: Partial<User>) {
-    // todo привести к норм виду схему
+    // Не разобрался как норм импортнуть, чтобы не получить password_validator_1.default is not a constructor
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');
     const schema = new passwordValidator();
@@ -161,8 +159,8 @@ export class UsersService {
 
     const userDb = await this.findOneById(uid);
 
-    this.usersRepository.remove(userDb);
+    await this.usersRepository.remove(userDb);
 
-    return true;
+    return { result: true };
   }
 }

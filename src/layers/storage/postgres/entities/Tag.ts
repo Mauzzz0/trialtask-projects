@@ -6,7 +6,7 @@ export class Tag {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.ownTags)
+  @ManyToOne(() => User, (user) => user.ownTags, { cascade: true })
   creator: User;
 
   @Column({ type: 'varchar', length: 40, default: 'null', unique: true })

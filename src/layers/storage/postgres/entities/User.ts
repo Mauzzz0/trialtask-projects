@@ -15,10 +15,10 @@ export class User {
   @Column({ type: 'varchar', length: 100, nullable: false, default: 'null' })
   password: string;
 
-  @OneToMany(() => Tag, (tag) => tag.creator, { cascade: true })
+  @OneToMany(() => Tag, (tag) => tag.creator, { onDelete: 'CASCADE' })
   ownTags: Tag[];
 
-  @ManyToMany(() => Tag, { cascade: true })
+  @ManyToMany(() => Tag, { onDelete: 'CASCADE' })
   @JoinTable()
   tagList: Tag[];
 }

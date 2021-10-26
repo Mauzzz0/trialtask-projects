@@ -8,8 +8,11 @@ import {
   UseInterceptors,
   UseFilters,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SignInPayload } from 'src/common/layers/contracts/dto/testapi/SignInPayload';
+import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
+import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { LocalAuthGuard } from 'src/layers/domains/testapi/guard/LocalAuthGuard';
 import { AuthService } from 'src/layers/domains/testapi/services/AuthService';
@@ -19,12 +22,14 @@ import { SignupBodyDto } from '../types/SignupBodyDto';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
+@ApiExtraModels(ResultPayload, SignInPayload)
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService, private userService: UsersService) {}
 
   @ApiOperation({ description: 'Регистрация' })
+  @ApiOkResponse(ResultPayload)
   @Post('/signup')
   public async register(@Body() body: SignupBodyDto): Promise<any> {
     const result = await this.userService.createProfile(body);
@@ -32,6 +37,7 @@ export class AuthController {
   }
 
   @ApiOperation({ description: 'Вход' })
+  @ApiOkResponse(SignInPayload)
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
   public async login(@Body() body: SigninBodyDto) {
@@ -41,6 +47,7 @@ export class AuthController {
   @ApiOperation({ description: 'Выход' })
   @Put('/logout')
   public async logout() {
+    // )))
     throw new NotImplementedException();
   }
 }

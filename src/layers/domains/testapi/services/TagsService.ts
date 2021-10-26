@@ -37,7 +37,7 @@ export class TagsService {
   }): Promise<any> {
     const { offset, length, sortByOrder, sortByName } = q;
 
-    const findOption: FindManyOptions<Tag>['order'] = {}; // todo чо такое ордер тута
+    const findOption: FindManyOptions<Tag>['order'] = {};
 
     if (sortByOrder == 'true') findOption.sortOrder = 1;
     if (sortByName == 'true') findOption.name = 1;
@@ -68,13 +68,16 @@ export class TagsService {
 
     await this.tagsRepository.save(tag);
 
-    return true;
+    return { result: true };
   }
 
   async showTag(id: number) {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
+
+    // ну оно хотя бы работает))
+    delete tag.creator.password;
 
     return tag;
   }
@@ -105,6 +108,6 @@ export class TagsService {
 
     await this.tagsRepository.delete(tag);
 
-    return true;
+    return { result: true };
   }
 }
