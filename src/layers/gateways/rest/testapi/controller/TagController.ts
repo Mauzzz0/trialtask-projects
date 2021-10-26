@@ -18,6 +18,7 @@ import {
   TagWithCreatorDto,
   TagWnoCreator,
 } from 'src/common/layers/contracts/dto/testapi/TagDto';
+import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
@@ -41,7 +42,7 @@ export class TagController {
   @ApiOperation({ description: 'Создание нового тэга' })
   @ApiOkResponse(ResultPayload)
   @Post('')
-  public async create(@User() user: any, @Body() body: CreateTagBodyDto): Promise<any> {
+  public async create(@User() user: UserReqDto, @Body() body: CreateTagBodyDto): Promise<any> {
     return this.tagsService.createOne(user, body);
   }
 
@@ -62,7 +63,7 @@ export class TagController {
   @ApiOkResponse(TagWnoCreator)
   @Put(':id')
   public async update(
-    @User() user: any,
+    @User() user: UserReqDto,
     @Param('id') id: number,
     @Body() body: UpdateTagBodyDto,
   ): Promise<any> {
@@ -72,7 +73,7 @@ export class TagController {
   @ApiOperation({ description: 'Удаление тэга. Только создатель.' })
   @ApiOkResponse(ResultPayload)
   @Delete(':id')
-  public async destroy(@User() user: any, @Param('id') id: number): Promise<any> {
+  public async destroy(@User() user: UserReqDto, @Param('id') id: number): Promise<any> {
     return this.tagsService.delete(user, id);
   }
 }

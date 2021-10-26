@@ -7,6 +7,7 @@ import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { TagRelations } from 'src/layers/storage/postgres/types/TagRelEnum';
 import { ResultResponse } from 'src/layers/gateways/rest/testapi/types/ResultResponse';
 import { User } from 'src/layers/storage/postgres/entities/User';
+import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 
 @Injectable()
 export class TagsService {
@@ -64,7 +65,7 @@ export class TagsService {
     return r;
   }
 
-  async createOne(user: any, tag: Partial<Tag>): Promise<ResultResponse> {
+  async createOne(user: UserReqDto, tag: Partial<Tag>): Promise<ResultResponse> {
     const creator = (await this.usersService.findOneByUsername(user.username)) as User;
     tag.creator = creator;
 
@@ -84,7 +85,7 @@ export class TagsService {
     return tag;
   }
 
-  async update(user: any, id: number, body: Partial<Tag>): Promise<Tag> {
+  async update(user: UserReqDto, id: number, body: Partial<Tag>): Promise<Tag> {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
@@ -102,7 +103,7 @@ export class TagsService {
     return r;
   }
 
-  async delete(user: any, id: number): Promise<ResultResponse> {
+  async delete(user: UserReqDto, id: number): Promise<ResultResponse> {
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();

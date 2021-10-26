@@ -19,6 +19,7 @@ import {
   UserUpdateDto,
   UserWnoPasswordDto,
 } from 'src/common/layers/contracts/dto/testapi/UserDto';
+import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
@@ -51,7 +52,7 @@ export class UserController {
   @ApiOperation({ description: 'Профиль со всеми тэгами' })
   @ApiOkResponse(UserDto)
   @Get('')
-  public async show(@User() user: any): Promise<any> {
+  public async show(@User() user: UserReqDto): Promise<any> {
     return this.userService.findOneByFilter(
       { username: user.username },
       { rel: [UserRelations.tagList] },
@@ -61,35 +62,38 @@ export class UserController {
   @ApiOperation({ description: 'Обновление профиля' })
   @ApiOkResponse(UserUpdateDto)
   @Put('')
-  public async update(@User() user: any, @Body() body: UpdateProfileBodyDto): Promise<any> {
+  public async update(@User() user: UserReqDto, @Body() body: UpdateProfileBodyDto): Promise<any> {
     return this.userService.updateProfile(user, body);
   }
 
   @ApiOperation({ description: 'Удаление профиля' })
   @ApiOkResponse(ResultPayload)
   @Delete('')
-  public async destroy(@User() user: any): Promise<any> {
+  public async destroy(@User() user: UserReqDto): Promise<any> {
     return this.userService.removeProfile(user);
   }
 
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
   @ApiOkResponse(UserWnoPasswordDto)
   @Post('/tag')
-  public async createTag(@User() user: any, @Body() body: AddTagToUserBodyDto): Promise<any> {
+  public async createTag(
+    @User() user: UserReqDto,
+    @Body() body: AddTagToUserBodyDto,
+  ): Promise<any> {
     return this.userService.addTasgToUser(user, body.tags);
   }
 
   @ApiOperation({ description: 'Удаление тэга из своего тэг-листа' })
   @ApiOkResponse(TagListDto)
   @Delete('/tag/:id')
-  public async destroyTag(@User() user: any, @Param('id') id: number): Promise<any> {
+  public async destroyTag(@User() user: UserReqDto, @Param('id') id: number): Promise<any> {
     return await this.userService.removeTasgFromUser(user, id);
   }
 
   @ApiOperation({ description: 'Тэги, которые я создал' })
   @ApiOkResponse(TagListDto)
   @Get('/tag/my')
-  public async showTags(@User() user: any): Promise<any> {
+  public async showTags(@User() user: UserReqDto): Promise<any> {
     const r = await this.userService.findOneByFilter(
       { username: user.username },
       { rel: [UserRelations.ownTags] },

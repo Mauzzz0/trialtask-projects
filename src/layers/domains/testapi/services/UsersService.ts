@@ -9,6 +9,7 @@ import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
 import { TagDto } from 'src/common/layers/contracts/dto/testapi/TagDto';
+import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 
 @Injectable()
 export class UsersService {
@@ -82,7 +83,7 @@ export class UsersService {
     return user;
   }
 
-  async addTasgToUser(user: any, ids: number[]): Promise<Partial<User>> {
+  async addTasgToUser(user: UserReqDto, ids: number[]): Promise<Partial<User>> {
     const { uid } = await this.findOneByUsername(user.username);
 
     const qr = this.connection.createQueryRunner();
@@ -116,7 +117,7 @@ export class UsersService {
     return r;
   }
 
-  async removeTasgFromUser(user: any, id: number): Promise<{ tags: Partial<TagDto>[] }> {
+  async removeTasgFromUser(user: UserReqDto, id: number): Promise<{ tags: Partial<TagDto>[] }> {
     const { uid } = await this.findOneByUsername(user.username);
 
     await this.connection.createQueryBuilder().relation(User, 'tagList').of(uid).remove(id);
@@ -145,7 +146,7 @@ export class UsersService {
     return { result: true };
   }
 
-  async updateProfile(user: any, body: Partial<User>): Promise<Partial<User>> {
+  async updateProfile(user: UserReqDto, body: Partial<User>): Promise<Partial<User>> {
     const { uid } = await this.findOneByUsername(user.username);
 
     await this.connection
@@ -160,7 +161,7 @@ export class UsersService {
     return r;
   }
 
-  async removeProfile(user: any): Promise<any> {
+  async removeProfile(user: UserReqDto): Promise<any> {
     const { uid } = await this.findOneByUsername(user.username);
 
     const userDb = (await this.findOneById(uid)) as User;
