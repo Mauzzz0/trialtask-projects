@@ -10,17 +10,10 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "cross-env NODE_ENV=development nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "start:services": "npm run stop:services && cd integration && docker-compose up --build -d",
-    "stop:services": "cd integration && docker-compose down",
-    "lint:scan": "eslint 'src/**'",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "start:watch": "cross-env NODE_ENV=development nest start --watch",
+    "start:services": "npm run stop:services && cd integration/docker-compose && docker-compose up --build -d",
+    "stop:services": "cd integration/docker-compose && docker-compose down",
+    "lint:scan": "eslint 'src/**'"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
