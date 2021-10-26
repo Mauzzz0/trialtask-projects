@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class SignupBodyDto {
   @ApiProperty({ description: 'email', example: 'email@domain.com' })
-  @IsString()
+  @IsEmail()
   public readonly email: string;
 
   @ApiProperty({ description: 'username', example: 'username' })

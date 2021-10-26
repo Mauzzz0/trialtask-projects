@@ -111,9 +111,6 @@ export class UsersService {
     if (!schema.validate(user.password)) {
       throw new PasswordToWeakError();
     }
-    if (!new RegExp(EmailRegex, 'gi').test(user.email)) {
-      throw new EmailIncorrectError();
-    }
 
     await this.usersRepository.save(user);
 

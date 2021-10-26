@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -14,16 +15,19 @@ import {
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
+import { ApiPaginatedResponse } from 'src/common/swagger/decorators/ApiPaginatedResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 import { TagsService } from 'src/layers/domains/testapi/services/TagsService';
+import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { CreateTagBodyDto } from '../types/CreateTagBodyDto';
+import { GetTagsPaginationQueryDto } from '../types/GetTagsPaginationQueryDto';
 import { UpdateTagBodyDto } from '../types/UpdateTagBodyDto';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels(CreateTagBodyDto, UpdateTagBodyDto)
+@ApiExtraModels(CreateTagBodyDto, UpdateTagBodyDto, Tag)
 @ApiBearerAuth()
 @ApiTags('Tag')
 @Controller('tag')
@@ -38,8 +42,9 @@ export class TagController {
 
   @ApiOperation({ description: 'Список тэгов' })
   @Get('')
-  public async list(@User() user: any, @Body() body: CreateTagBodyDto): Promise<any> {
-    throw new NotImplementedException();
+  public async list(@Query() q: GetTagsPaginationQueryDto): Promise<any> {
+    console.log(q);
+    return this.tagsService.findPagination(q);
   }
 
   @ApiOperation({ description: 'Информация по тэгу' })

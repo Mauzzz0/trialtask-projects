@@ -11,7 +11,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    let code = exception['code'] || 'UNTRACKED_APP_ERROR';
+    // сначала наш код, затем нейм эксепшена если есть, затем UNTRACKED
+    let code = exception['code'] || exception.name || 'UNTRACKED_APP_ERROR';
     let { message } = exception;
 
     // Костылёк, непонятно как LocalStrategy кидает свой Unauthorized()

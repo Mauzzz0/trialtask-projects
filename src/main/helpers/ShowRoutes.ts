@@ -5,6 +5,7 @@ export const ShowRoutesAtStart = (app: INestApplication) => {
   const router = server._events.request._router;
   const padding = 7;
 
+  console.log('=======Routes:======');
   router.stack
     .map((layer) => {
       if (layer.route) {
@@ -28,4 +29,5 @@ export const ShowRoutesAtStart = (app: INestApplication) => {
           `${item.route.path}`,
       ),
     );
+  console.log('====================');
 };

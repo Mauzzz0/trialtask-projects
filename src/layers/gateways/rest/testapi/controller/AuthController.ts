@@ -41,6 +41,7 @@ export class AuthController {
   @ApiOperation({ description: 'Выход' })
   @Put('/logout')
   public async logout() {
+    // TODO просто убирать из хэдера токен
     throw new NotImplementedException();
   }
 }

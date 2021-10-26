@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Connection, FindManyOptions, Repository } from 'typeorm';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { UsersService } from './UsersService';
 import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
@@ -25,6 +25,39 @@ export class TagsService {
       where: { id: id },
       relations: opts?.rel,
     });
+
+    return r;
+  }
+
+  async findPagination(q: {
+    offset: number;
+    length: number;
+    sortByOrder: string;
+    sortByName: string;
+  }): Promise<any> {
+    const { offset, length, sortByOrder, sortByName } = q;
+
+    const findOption: FindManyOptions<Tag>['order'] = {}; // todo чо такое ордер тута
+
+    if (sortByOrder == 'true') findOption.sortOrder = 1;
+    if (sortByName == 'true') findOption.name = 1;
+
+    // findOption.sortOrder = sortByOrder == 'true' ? 'ASC' : 'DESC';
+    // findOption.name = sortByName == 'true' ? 'ASC' : 'DESC';
+
+    const [list, count] = await this.tagsRepository.findAndCount({
+      relations: [TagRelations.creator],
+      skip: offset,
+      take: length,
+      order: findOption,
+    });
+
+    const r = {
+      total: count,
+      limit: length,
+      offset,
+      items: list,
+    };
 
     return r;
   }
