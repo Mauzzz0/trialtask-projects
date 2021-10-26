@@ -21,37 +21,61 @@ export class UsersService {
     return await hash(password, 6);
   }
 
-  async findOneByFilter(filter: Record<string, any>, opts?: FindOpts): Promise<any> {
-    const r = await this.usersRepository.findOne({ where: filter, relations: opts?.rel });
+  async findOneByFilter(
+    filter: Record<string, any>,
+    opts?: FindOpts,
+    pwd?: boolean,
+  ): Promise<Partial<User>> {
+    const user = await this.usersRepository.findOne({ where: filter, relations: opts?.rel });
 
-    return r;
+    if (!pwd) {
+      const { password, ...r } = user;
+      return r;
+    }
+
+    return user;
   }
 
-  async findOneById(id: string, opts?: FindOpts): Promise<any> {
-    const r = await this.usersRepository.findOne({
+  async findOneById(id: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+    const user = await this.usersRepository.findOne({
       where: { uid: id },
       relations: opts?.rel,
     });
 
-    return r;
+    if (!pwd) {
+      const { password, ...r } = user;
+      return r;
+    }
+
+    return user;
   }
 
-  async findOneByEmail(email: string, opts?: FindOpts): Promise<any> {
-    const r = await this.usersRepository.findOne({
+  async findOneByEmail(email: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+    const user = await this.usersRepository.findOne({
       where: { email },
       relations: opts?.rel,
     });
 
-    return r;
+    if (!pwd) {
+      const { password, ...r } = user;
+      return r;
+    }
+
+    return user;
   }
 
-  async findOneByUsername(username: string, opts?: FindOpts): Promise<any> {
-    const r = await this.usersRepository.findOne({
+  async findOneByUsername(username: string, opts?: FindOpts, pwd?: boolean): Promise<any> {
+    const user = await this.usersRepository.findOne({
       where: { username },
       relations: opts?.rel,
     });
 
-    return r;
+    if (!pwd) {
+      const { password, ...r } = user;
+      return r;
+    }
+
+    return user;
   }
 
   async addTasgToUser(user: any, ids: number[]) {

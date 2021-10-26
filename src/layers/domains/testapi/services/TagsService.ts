@@ -64,10 +64,10 @@ export class TagsService {
 
   async createOne(user: any, tag: Partial<Tag>) {
     const creator = await this.usersService.findOneByUsername(user.username);
-    // todo тут фиксануть ненорм
-    tag['creator'] = creator.uid;
+    tag.creator = creator.uid;
+
     await this.tagsRepository.save(tag);
-    console.log('Добавлен тэг: ', tag);
+
     return true;
   }
 
@@ -98,7 +98,6 @@ export class TagsService {
   }
 
   async delete(user: any, id: number) {
-    // todo сюда проверку на если tag == udnefined
     const tag = await this.findOneById(id, { rel: [TagRelations.creator] });
 
     if (!tag) throw new NotFoundException();
