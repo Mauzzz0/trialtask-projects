@@ -42,6 +42,9 @@ npm run start
 # Запуск dev с отслеживание изменений
 npm run start:watch
 
+# Посмотреть ворнинги линтера
+npm run lint:scan
+
 ```
 
 ## Описание
