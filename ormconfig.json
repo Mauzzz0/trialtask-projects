@@ -6,12 +6,12 @@
   "database": "db",
   "synchronize": true,
   "logging": false,
-  "entities": ["src/layers/storage/mssql/entities/**/*.js"],
-  "migrations": ["src/migration/**/*.ts"],
-  "subscribers": ["src/subscriber/**/*.ts"],
+  "entities": ["src/layers/storage/postgres/entities/**/*.js"],
+  "migrations": ["src/layers/storage/postgres/migrations/**/*.js"],
+  "subscribers": ["src/subscriber/**/*.js"],
   "cli": {
-    "entitiesDir": "src/entity",
-    "migrationsDir": "src/migration",
+    "entitiesDir": "src/layers/storage/postgres/entities",
+    "migrationsDir": "src/layers/storage/postgres/migrations",
     "subscribersDir": "src/subscriber"
   },
   "options": { "trustServerCertificate": true }
