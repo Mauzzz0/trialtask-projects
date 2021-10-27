@@ -13,10 +13,10 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
+import { TagBaseDto } from 'src/common/layers/contracts/dto/testapi/TagBaseDto';
 import {
-  TagDto,
+  TagWithCreatorUidDto,
   TagWithCreatorDto,
-  TagWnoCreator,
 } from 'src/common/layers/contracts/dto/testapi/TagDto';
 import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
@@ -33,7 +33,13 @@ import { UpdateTagBodyDto } from '../types/UpdateTagBodyDto';
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @UseGuards(JwtAuthGuard)
-@ApiExtraModels(CreateTagBodyDto, UpdateTagBodyDto, TagDto, TagWithCreatorDto, TagWnoCreator)
+@ApiExtraModels(
+  CreateTagBodyDto,
+  UpdateTagBodyDto,
+  TagWithCreatorUidDto,
+  TagWithCreatorDto,
+  TagBaseDto,
+)
 @ApiBearerAuth()
 @ApiTags('Tag')
 @Controller('tag')
@@ -62,7 +68,7 @@ export class TagController {
   }
 
   @ApiOperation({ description: 'Обновление тэга. Только создатель.' })
-  @ApiOkResponse(TagWnoCreator)
+  @ApiOkResponse(TagBaseDto)
   @Put(':id')
   public async update(
     @User() user: UserReqDto,

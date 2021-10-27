@@ -8,7 +8,7 @@ import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { FindOpts } from 'src/layers/storage/postgres/types/FindUserOpts';
 import { UserRelations } from 'src/layers/storage/postgres/types/UserRelEnum';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
-import { TagDto } from 'src/common/layers/contracts/dto/testapi/TagDto';
+import { TagWithCreatorUidDto } from 'src/common/layers/contracts/dto/testapi/TagDto';
 import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 
 @Injectable()
@@ -117,7 +117,10 @@ export class UsersService {
     return r;
   }
 
-  async removeTasgFromUser(user: UserReqDto, id: number): Promise<{ tags: Partial<TagDto>[] }> {
+  async removeTasgFromUser(
+    user: UserReqDto,
+    id: number,
+  ): Promise<{ tags: Partial<TagWithCreatorUidDto>[] }> {
     const { uid } = await this.findOneByUsername(user.username);
 
     await this.connection.createQueryBuilder().relation(User, 'tagList').of(uid).remove(id);

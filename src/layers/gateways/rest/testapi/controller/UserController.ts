@@ -12,17 +12,14 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
+import { TagBaseDto } from 'src/common/layers/contracts/dto/testapi/TagBaseDto';
 import {
   PartialTagDto,
-  TagDto,
-  TagWnoCreator,
+  TagWithCreatorUidDto,
 } from 'src/common/layers/contracts/dto/testapi/TagDto';
 import { TagListDto } from 'src/common/layers/contracts/dto/testapi/TagListDto';
-import {
-  UserDto,
-  UserUpdateDto,
-  UserWnoPasswordDto,
-} from 'src/common/layers/contracts/dto/testapi/UserDto';
+import { UserBaseDto, UserUpdateDto } from 'src/common/layers/contracts/dto/testapi/UserBaseDto';
+import { UserDto, UserWnoPasswordDto } from 'src/common/layers/contracts/dto/testapi/UserDto';
 import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
@@ -40,16 +37,16 @@ import { UpdateProfileBodyDto } from '../types/UpdateProfileBodyDto';
 @ApiExtraModels(
   TagListDto,
   UserDto,
+  TagBaseDto,
   PartialTagDto,
-  TagDto,
-  TagDto,
+  TagWithCreatorUidDto,
+  TagWithCreatorUidDto,
   UserWnoPasswordDto,
   UserUpdateDto,
   ResultPayload,
-  TagWnoCreator,
+  UserWnoPasswordDto,
+  UserBaseDto,
   PartialTagDto,
-  TagWnoCreator,
-  TagWnoCreator,
 )
 @ApiBearerAuth()
 @ApiTags('User')
@@ -58,7 +55,7 @@ export class UserController {
   constructor(private userService: UsersService) {}
 
   @ApiOperation({ description: 'Профиль со всеми тэгами' })
-  // @ApiOkResponse(UserDto)
+  @ApiOkResponse(UserBaseDto)
   @Get('')
   public async show(@User() user: UserReqDto): Promise<any> {
     return this.userService.findOneByFilter(
@@ -82,7 +79,7 @@ export class UserController {
   }
 
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
-  @ApiOkResponse(TagDto)
+  @ApiOkResponse(UserBaseDto)
   @Post('/tag')
   public async createTag(
     @User() user: UserReqDto,
@@ -92,7 +89,7 @@ export class UserController {
   }
 
   @ApiOperation({ description: 'Удаление тэга из своего тэг-листа' })
-  @ApiOkResponse(PartialTagDto)
+  @ApiOkResponse(TagListDto)
   @Delete('/tag/:id')
   public async destroyTag(@User() user: UserReqDto, @Param('id') id: number): Promise<any> {
     return await this.userService.removeTasgFromUser(user, id);
