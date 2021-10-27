@@ -55,6 +55,8 @@ export class TagsService {
       order: findOption,
     });
 
+    list.map((item) => delete item.creator.password);
+
     const r = {
       total: count,
       limit: length,

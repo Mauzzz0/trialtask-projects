@@ -1,7 +1,7 @@
 import { ApiProperty, IntersectionType, OmitType, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
-import { UserWnoPasswordDto } from './UserDto';
+import { UserUpdateDto, UserWnoPasswordDto } from './UserDto';
 
 export class TagDto {
   @ApiProperty()
@@ -29,11 +29,11 @@ export class PartialTagDto extends PartialType(TagDto) {}
 export class TagWnoCreator extends OmitType(TagDto, ['creatorUid'] as const) {}
 
 export class Creator {
-  @ApiProperty({ type: [PartialTagDto] })
+  @ApiProperty({ type: UserUpdateDto })
   @ValidateNested()
   @IsObject()
-  @Type(() => UserWnoPasswordDto)
-  public readonly creator: UserWnoPasswordDto;
+  @Type(() => UserUpdateDto)
+  public readonly creator: UserUpdateDto;
 }
 
-export class TagWithCreatorDto extends IntersectionType(TagDto, Creator) {}
+export class TagWithCreatorDto extends IntersectionType(TagWnoCreator, Creator) {}

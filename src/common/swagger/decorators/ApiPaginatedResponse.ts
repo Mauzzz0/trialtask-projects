@@ -26,7 +26,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
                       offset: {
                         type: 'number',
                       },
-                      results: {
+                      items: {
                         type: 'array',
                         items: { $ref: getSchemaPath(model) },
                       },

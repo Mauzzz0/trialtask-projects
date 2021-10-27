@@ -12,7 +12,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
-import { TagDto, TagWnoCreator } from 'src/common/layers/contracts/dto/testapi/TagDto';
+import {
+  PartialTagDto,
+  TagDto,
+  TagWnoCreator,
+} from 'src/common/layers/contracts/dto/testapi/TagDto';
 import { TagListDto } from 'src/common/layers/contracts/dto/testapi/TagListDto';
 import {
   UserDto,
@@ -36,11 +40,15 @@ import { UpdateProfileBodyDto } from '../types/UpdateProfileBodyDto';
 @ApiExtraModels(
   TagListDto,
   UserDto,
+  PartialTagDto,
+  TagDto,
   TagDto,
   UserWnoPasswordDto,
-  TagWnoCreator,
   UserUpdateDto,
   ResultPayload,
+  TagWnoCreator,
+  PartialTagDto,
+  TagWnoCreator,
   TagWnoCreator,
 )
 @ApiBearerAuth()
@@ -50,7 +58,7 @@ export class UserController {
   constructor(private userService: UsersService) {}
 
   @ApiOperation({ description: 'Профиль со всеми тэгами' })
-  @ApiOkResponse(UserDto)
+  // @ApiOkResponse(UserDto)
   @Get('')
   public async show(@User() user: UserReqDto): Promise<any> {
     return this.userService.findOneByFilter(
@@ -74,7 +82,7 @@ export class UserController {
   }
 
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
-  @ApiOkResponse(UserWnoPasswordDto)
+  @ApiOkResponse(TagDto)
   @Post('/tag')
   public async createTag(
     @User() user: UserReqDto,
@@ -84,7 +92,7 @@ export class UserController {
   }
 
   @ApiOperation({ description: 'Удаление тэга из своего тэг-листа' })
-  @ApiOkResponse(TagListDto)
+  @ApiOkResponse(PartialTagDto)
   @Delete('/tag/:id')
   public async destroyTag(@User() user: UserReqDto, @Param('id') id: number): Promise<any> {
     return await this.userService.removeTasgFromUser(user, id);

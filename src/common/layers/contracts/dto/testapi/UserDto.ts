@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsString, ValidateNested } from 'class-validator';
-import { PartialTagDto } from './TagDto';
+import { PartialTagDto, TagWnoCreator } from './TagDto';
 // import { BaseTagDto } from './BaseTagDto';
 
 export class UserDto {
@@ -21,11 +21,11 @@ export class UserDto {
   @IsString()
   public readonly username: string;
 
-  @ApiProperty({ type: [PartialTagDto] })
+  @ApiProperty({ type: [TagWnoCreator] })
   @ValidateNested({ each: true })
   @IsArray()
-  @Type(() => PartialTagDto)
-  public readonly tags: PartialTagDto[];
+  @Type(() => TagWnoCreator)
+  public readonly tags: TagWnoCreator[];
 }
 
 export class UserWnoPasswordDto extends OmitType(UserDto, ['password'] as const) {}

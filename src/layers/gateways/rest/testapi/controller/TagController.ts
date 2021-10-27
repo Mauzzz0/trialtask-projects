@@ -22,6 +22,7 @@ import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
+import { ApiPaginatedResponse } from 'src/common/swagger/decorators/ApiPaginatedResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 import { TagsService } from 'src/layers/domains/testapi/services/TagsService';
@@ -47,6 +48,7 @@ export class TagController {
   }
 
   @ApiOperation({ description: 'Список тэгов' })
+  @ApiPaginatedResponse(TagWithCreatorDto)
   @Get('')
   public async list(@Query() q: GetTagsPaginationQueryDto): Promise<any> {
     return this.tagsService.findPagination(q);
