@@ -4,7 +4,6 @@ import { TagController } from 'src/layers/gateways/rest/testapi/controller/TagCo
 import { UserController } from 'src/layers/gateways/rest/testapi/controller/UserController';
 import { Tag } from 'src/layers/storage/postgres/entities/Tag';
 import { User } from 'src/layers/storage/postgres/entities/User';
-// import { UserTag } from 'src/layers/storage/postgres/entities/UserTag';
 import { TagsService } from '../services/TagsService';
 import { UsersService } from '../services/UsersService';
 

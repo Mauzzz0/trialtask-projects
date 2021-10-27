@@ -45,9 +45,6 @@ export class TagsService {
     if (sortByOrder == 'true') findOption.sortOrder = 1;
     if (sortByName == 'true') findOption.name = 1;
 
-    // findOption.sortOrder = sortByOrder == 'true' ? 'ASC' : 'DESC';
-    // findOption.name = sortByName == 'true' ? 'ASC' : 'DESC';
-
     const [list, count] = await this.tagsRepository.findAndCount({
       relations: [TagRelations.creator],
       skip: offset,

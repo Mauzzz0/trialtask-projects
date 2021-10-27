@@ -97,7 +97,7 @@ export class UsersService {
       const tagList = await Promise.all(
         ids.map(async (id) => {
           const r = await qr.manager.findOne(Tag, id);
-          if (!r) throw new NotFoundException(); // todo свой эррор
+          if (!r) throw new NotFoundException();
           return r;
         }),
       );
@@ -137,7 +137,6 @@ export class UsersService {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const passwordValidator = require('password-validator');
     const schema = new passwordValidator();
-
     schema.has().uppercase().has().lowercase().has().digits(1).has().not().spaces().is().min(8);
 
     if (!schema.validate(user.password)) {

@@ -1,9 +1,6 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsArray, IsString, ValidateNested } from 'class-validator';
-import { TagBaseDto } from './TagBaseDto';
+import { IsString, ValidateNested } from 'class-validator';
 import { UserBaseDto } from './UserBaseDto';
-// import { BaseTagDto } from './BaseTagDto';
 
 export class UserDto extends UserBaseDto {
   @ApiProperty()

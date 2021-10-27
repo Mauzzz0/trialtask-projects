@@ -11,9 +11,6 @@ export class TagWithCreatorUidDto extends TagBaseDto {
   public readonly creatorUid: string;
 }
 
-export class PartialTagDto extends PartialType(TagWithCreatorUidDto) {}
-// export class TagWnoCreator extends OmitType(TagDto, ['creatorUid'] as const) {}
-
 export class TagWithCreatorDto extends TagBaseDto {
   @ApiProperty({ type: UserUpdateDto })
   @ValidateNested()
@@ -22,4 +19,4 @@ export class TagWithCreatorDto extends TagBaseDto {
   public readonly creator: UserUpdateDto;
 }
 
-// export class TagWithCreatorDto extends IntersectionType(TagWnoCreator, Creator) {}
+export class PartialTagDto extends PartialType(TagWithCreatorUidDto) {}

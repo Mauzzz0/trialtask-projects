@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { AuthModule } from './layers/domains/testapi/modules/AuthModule';
+import { UsersModule } from './layers/domains/testapi/modules/UsersModule';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { AuthModule } from './layers/domains/testapi/modules/AuthModule';
         }),
     }),
     AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

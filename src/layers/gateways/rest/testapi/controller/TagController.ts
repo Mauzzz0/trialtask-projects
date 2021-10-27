@@ -21,9 +21,11 @@ import {
 import { UserReqDto } from 'src/common/layers/contracts/dto/testapi/UserReqDto';
 import { User } from 'src/common/layers/rest/decorators/User';
 import { ResponseWithStatusInterceptor } from 'src/common/layers/rest/interceptors/ResponseWithStatus';
+import { ApiErrorResponse } from 'src/common/swagger/decorators/ApiErrorResponse';
 import { ApiOkResponse } from 'src/common/swagger/decorators/ApiOkResponse';
 import { ApiPaginatedResponse } from 'src/common/swagger/decorators/ApiPaginatedResponse';
 import { HttpExceptionFilter } from 'src/common/swagger/filters/HttpExceptionFilter';
+import { NoticePayload } from 'src/common/swagger/schema/NoticePayload';
 import { JwtAuthGuard } from 'src/layers/domains/testapi/guard/JwtAuthGuard';
 import { TagsService } from 'src/layers/domains/testapi/services/TagsService';
 import { CreateTagBodyDto } from '../types/CreateTagBodyDto';
@@ -39,6 +41,7 @@ import { UpdateTagBodyDto } from '../types/UpdateTagBodyDto';
   TagWithCreatorUidDto,
   TagWithCreatorDto,
   TagBaseDto,
+  NoticePayload,
 )
 @ApiBearerAuth()
 @ApiTags('Tag')
@@ -48,6 +51,7 @@ export class TagController {
 
   @ApiOperation({ description: 'Создание нового тэга' })
   @ApiOkResponse(ResultPayload)
+  @ApiErrorResponse()
   @Post('')
   public async create(@User() user: UserReqDto, @Body() body: CreateTagBodyDto): Promise<any> {
     return this.tagsService.createOne(user, body);
@@ -55,6 +59,7 @@ export class TagController {
 
   @ApiOperation({ description: 'Список тэгов' })
   @ApiPaginatedResponse(TagWithCreatorDto)
+  @ApiErrorResponse()
   @Get('')
   public async list(@Query() q: GetTagsPaginationQueryDto): Promise<any> {
     return this.tagsService.findPagination(q);
@@ -62,6 +67,7 @@ export class TagController {
 
   @ApiOperation({ description: 'Информация по тэгу' })
   @ApiOkResponse(TagWithCreatorDto)
+  @ApiErrorResponse()
   @Get(':id')
   public async index(@Param('id') id: number): Promise<any> {
     return this.tagsService.showTag(id);
@@ -69,6 +75,7 @@ export class TagController {
 
   @ApiOperation({ description: 'Обновление тэга. Только создатель.' })
   @ApiOkResponse(TagBaseDto)
+  @ApiErrorResponse()
   @Put(':id')
   public async update(
     @User() user: UserReqDto,
@@ -80,6 +87,7 @@ export class TagController {
 
   @ApiOperation({ description: 'Удаление тэга. Только создатель.' })
   @ApiOkResponse(ResultPayload)
+  @ApiErrorResponse()
   @Delete(':id')
   public async destroy(@User() user: UserReqDto, @Param('id') id: number): Promise<any> {
     return this.tagsService.delete(user, id);

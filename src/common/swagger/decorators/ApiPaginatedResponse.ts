@@ -11,7 +11,6 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
         oneOf: [
           {
             properties: {
-              trackingId: { type: 'string' },
               status: { type: 'string', default: SuccessOrErrorEnum.Ok },
               payload: {
                 allOf: [

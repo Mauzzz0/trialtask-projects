@@ -19,10 +19,12 @@ import { AuthService } from 'src/layers/domains/testapi/services/AuthService';
 import { UsersService } from 'src/layers/domains/testapi/services/UsersService';
 import { SigninBodyDto } from '../types/SigninBodyDto';
 import { SignupBodyDto } from '../types/SignupBodyDto';
+import { NoticePayload } from 'src/common/swagger/schema/NoticePayload';
+import { ApiErrorResponse } from 'src/common/swagger/decorators/ApiErrorResponse';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
-@ApiExtraModels(ResultPayload, SignInPayload)
+@ApiExtraModels(ResultPayload, SignInPayload, NoticePayload)
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {
@@ -30,6 +32,7 @@ export class AuthController {
 
   @ApiOperation({ description: 'Регистрация' })
   @ApiOkResponse(ResultPayload)
+  @ApiErrorResponse()
   @Post('/signup')
   public async register(@Body() body: SignupBodyDto): Promise<ResultPayload> {
     const result = await this.userService.createProfile(body);
@@ -38,6 +41,7 @@ export class AuthController {
 
   @ApiOperation({ description: 'Вход' })
   @ApiOkResponse(SignInPayload)
+  @ApiErrorResponse()
   @UseGuards(LocalAuthGuard)
   @Post('/signin')
   public async login(@Body() body: SigninBodyDto) {
@@ -45,9 +49,9 @@ export class AuthController {
   }
 
   @ApiOperation({ description: 'Выход' })
+  @ApiErrorResponse()
   @Put('/logout')
   public async logout() {
-    // )))
     throw new NotImplementedException();
   }
 }
