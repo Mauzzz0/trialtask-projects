@@ -21,10 +21,12 @@ import { SigninBodyDto } from '../types/SigninBodyDto';
 import { SignupBodyDto } from '../types/SignupBodyDto';
 import { NoticePayload } from 'src/common/swagger/schema/NoticePayload';
 import { ApiErrorResponse } from 'src/common/swagger/decorators/ApiErrorResponse';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 @UseInterceptors(ResponseWithStatusInterceptor)
 @UseFilters(HttpExceptionFilter)
 @ApiExtraModels(ResultPayload, SignInPayload, NoticePayload)
+@UseGuards(ThrottlerGuard)
 @ApiTags('Authorization')
 @Controller('auth')
 export class AuthController {

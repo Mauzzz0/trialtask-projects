@@ -10,6 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
 import { TagBaseDto } from 'src/common/layers/contracts/dto/testapi/TagBaseDto';
@@ -81,6 +82,7 @@ export class UserController {
     return this.userService.removeProfile(user);
   }
 
+  @UseGuards(ThrottlerGuard)
   @ApiOperation({ description: 'Добавление тэга себе в тэг-лист' })
   @ApiOkResponse(UserBaseDto)
   @ApiErrorResponse()
@@ -100,6 +102,7 @@ export class UserController {
     return await this.userService.removeTasgFromUser(user, id);
   }
 
+  @UseGuards(ThrottlerGuard)
   @ApiOperation({ description: 'Тэги, которые я создал' })
   @ApiOkResponse(TagListDto)
   @ApiErrorResponse()

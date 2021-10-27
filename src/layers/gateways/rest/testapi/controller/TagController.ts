@@ -11,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ResultPayload } from 'src/common/layers/contracts/dto/testapi/ResultPayload';
 import { TagBaseDto } from 'src/common/layers/contracts/dto/testapi/TagBaseDto';
@@ -57,6 +58,7 @@ export class TagController {
     return this.tagsService.createOne(user, body);
   }
 
+  @UseGuards(ThrottlerGuard)
   @ApiOperation({ description: 'Список тэгов' })
   @ApiPaginatedResponse(TagWithCreatorDto)
   @ApiErrorResponse()

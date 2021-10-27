@@ -8,7 +8,7 @@ export class GetTagsPaginationQueryDto {
   @IsNumber()
   public readonly offset: number;
 
-  @ApiProperty({ description: 'length', example: 10 })
+  @ApiProperty({ description: 'length [max 100]', example: 10, maximum: 100 }) // 100 макс, чтобы не нагружать
   @Type(() => Number)
   @IsNumber()
   public readonly length: number;
