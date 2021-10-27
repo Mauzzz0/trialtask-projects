@@ -1,6 +1,6 @@
-import { hash } from 'bcryptjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'bcryptjs';
 import { PasswordToWeakError } from 'src/common/rules/exceptions/PasswordToWeakError';
 import { User } from 'src/layers/storage/postgres/entities/User';
 import { Connection, Repository } from 'typeorm';
@@ -142,6 +142,8 @@ export class UsersService {
     if (!schema.validate(user.password)) {
       throw new PasswordToWeakError();
     }
+
+    user.password = await hash(user.password, 5);
 
     await this.usersRepository.save(user);
 
