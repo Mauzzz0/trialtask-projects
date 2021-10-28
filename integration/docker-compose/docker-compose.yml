@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  postgres-OD:
+    container_name: postgres-OD-container
+    network_mode: "host"
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - postgres_OD_container:/var/lib/postgres
+
+  pgadmin:
+    container_name: pgadmin-OD-container
+    network_mode: "host"
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: me@me.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "80:80"
+    volumes:
+      - pgadmin_OD_container:/var/lib/pgadmin
+
+volumes:
+  postgres_OD_container:
+  pgadmin_OD_container:
