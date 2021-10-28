@@ -2,7 +2,7 @@
 
 ## Ссылка на задание
 
-- [Task.md](https://github.com/Mauzzz0/outside/blob/master/Task.md)
+- [Task.md](https://github.com/Mauzzz0/trialtask-projects/blob/master/typescript/outsideDigital/Task.md)
 
 ## Ссылки на панели сервисов (доступы после разворачивания приложения)
 
@@ -12,11 +12,11 @@
 
 ## Начало работы
 
-* Скачать репозиторий (http)
+* Скачать репозиторий (http) [is incorrect]
 ```bash
 git clone https://github.com/Mauzzz0/outside
 ````
-* **ИЛИ** скачать репозиторий (ssh)
+* **ИЛИ** скачать репозиторий (ssh) [is incorrect]
 ```bash
 git clone git@github.com:Mauzzz0/outside.git
 ````
